@@ -1,0 +1,11 @@
+nbproject
+
+# OS generated files #
+######################
+*.DS_Store
+*.DS_Store?
+*.lock
+*._*
+ehthumbs.db
+Thumbs.db
+
