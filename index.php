@@ -1,33 +1,77 @@
 <?php
+require 'Slim/Slim.php';
 require_once("class/DB.class.php");
 require_once("class/Personne.class.php");
 require_once("class/Auth.class.php");
 
-$auth = Auth::getInstance();
-if(isset($_GET['key'])){
-  try {
-    $auth->login($_GET['key']); 
-  } catch (ErrorException $e) {
-    echo json_encode(array("erreur" => $e->getMessage()));
-  }
+\Slim\Slim::registerAutoloader();
+
+$app = new \Slim\Slim();
+
+
+function check_perm() {
+	global $app;
+	$err_code = $err_msg = NULL;
+	try {
+		if (empty($_GET['key'])) {
+			$err_code = 1;
+			throw new Exception("You need a key bastard !!");
+		}
+		$key = $_GET['key'];
+		$auth = Auth::getInstance();
+		try {
+			$auth->login($key);
+		}
+		catch (Exception $e) {
+			$err_code = 2;
+			throw $e;
+		}
+	}
+	catch (Exception $e) {
+		$err_msg = $e->getMessage();
+		$app->render("json.php", array("err_code"=>$err_code, "err_msg"=>$err_msg));
+		return False;
+	}
+	
+	return True;
 }
 
-if(isset($_GET['login'])){
-  try {
-    $arthur = new Personne($_GET['login']);
-    echo json_encode($arthur->getDetails());
-  } catch (ErrorException $e) {
-    echo json_encode(array("erreur" => $e->getMessage()));
-  }
-}
 
-if(isset($_GET['find'])){
-  try {
-    $data = Personne::find($_GET['find']);
-    echo json_encode($data);
-  } catch (ErrorException $e) {
-    echo json_encode(array("erreur" => $e->getMessage()));
-  }
-}
+$app->get('/v1/personne/details/:login', function ($login) use ($app) {
+	if (check_perm()) {
+		$auth = Auth::getInstance();
+		try {
+			$personne = new Personne($login);
+			$result = "";
+			if ($auth->getDroits() == "etendu") {
+				$result = $personne->getDetailsEtendu();
+			}
+			else {
+				$result = $personne->getDetailsSimple();
+			}
+			$app->render("json.php", array("result"=>$result));
+		}
+		catch (Exception $e) {
+			$app->render("json.php", array("err_code"=>3,"err_msg"=>$e->getMessage()));
+		}
+	}
+});
+
+$app->get('/v1/personne/find/:loginpart', function ($loginpart) use ($app) {
+	if (check_perm()) {
+		$auth = Auth::getInstance();
+		try {
+			$data = Personne::find($loginpart);
+			$app->render("json.php", array("result"=>$data));
+		}
+		catch (Exception $e) {
+			$app->render("json.php", array("err_code"=>3,"err_msg"=>$e->getMessage()));
+		}
+	}
+});
+
+
+
+$app->run();
 
 ?>

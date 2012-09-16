@@ -86,9 +86,7 @@ class Personne {
       $db->pdo->query("INSERT");
   }
   
-  function getDetails(){
-    // Si le lecteur a les droits LectureSimple
-    if(1){
+  function getDetailsSimple(){
       return array(
         "login" => $this->login,
         "nom" => $this->nom,
@@ -97,8 +95,9 @@ class Personne {
         "type" => $this->type,
         "cotisant" => $this->cotisant
       );
-    }
-    else {
+  }
+   
+  function getDetailsEtendu(){
       return array(
         "login" => $this->login,
         "nom" => $this->nom,
@@ -117,7 +116,6 @@ class Personne {
         "branche" => $this->branche,
         "semestre" => $this->semestre
       );
-    }
   }
   
   function delete(){
