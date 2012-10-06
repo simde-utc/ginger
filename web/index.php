@@ -9,11 +9,10 @@ require_once '../lib/Slim/Slim.php';
 $app = new \Slim\Slim();
 $app->contentType('application/json; charset=utf-8');
 
+require_once '../class/ginger.class.php';
 
 require_once '../class/Api.class.php';
 $api = new Api($app);
-
-require_once '../class/ginger.class.php';
 
 $app->get('/v1/:login', function ($login) use ($api) {
 	$ginger = new Ginger($_GET['key']);
