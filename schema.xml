@@ -18,7 +18,7 @@
     <column name="mail" type="varchar" size="200" required="true"/>
     <column name="type" type="enum" valueSet="etu, pers, escom, escompers, ext" required="true"/>
     <column name="date_naissance" type="date" required="false"/>
-    <column name="is_adulte" type="integer" required="true"/>
+    <column name="is_adulte" type="boolean" required="true"/>
     <column name="badge_uid" type="varchar" size="10" required="false"/>
     <column name="expiration_badge" type="date" required="false"/>
     <behavior name="timestampable" />
@@ -31,8 +31,8 @@
     <column name="asso" type="varchar" size="200" required="true" />
     <column name="details" type="varchar" size="1000" required="true" />
     <column name="cle" type="varchar" size="50" required="true" />
-    <column name="droit_ecriture" type="integer" required="true" default="0"/>
-    <column name="droit_badges" type="integer" required="true" default="0"/>
+    <column name="droit_ecriture" type="boolean" required="true" default="false"/>
+    <column name="droit_badges" type="boolean" required="true" default="false"/>
     <behavior name="timestampable" />
     <unique>
       <unique-column name="cle"/>

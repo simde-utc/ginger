@@ -1,8 +1,5 @@
 <?php
 
-require_once 'class/Auth.class.php';
-require_once 'models/Personne.class.php';
-
 class Ginger {
 	protected $auth;
 	
@@ -10,13 +7,25 @@ class Ginger {
 		if (empty($key)) {
 			throw new Exception("You need a key bastard !!");
 		}
-		$auth = Auth::getInstance();
-		$auth->login($key);
-		$this->auth = $auth;
+		$this->auth = AuthkeyQuery::create()
+						->filterByCle($key)
+            ->findOne();
 	}
 
 	public function getPersonneDetails($login) {
-		$personne = new Personne($login);
+		$personne = PersonneQuery::create()
+						->findOneByLogin($login);
+		
+		$retour = array(
+				"nom" => $personne->getNom(),
+				"prenom" => $personne->getPrenom(),
+				"mail" => $personne->getMail(),
+				"type" => $personne->getType(),
+				"is_adulte" => $personne->getIsAdulte()
+		);
+		
+		if($this->auth->getDroitBadges())
+
 		if ($this->auth->getDroits() == "etendu") {
 			return $personne->getDetailsEtendu();
 		}
