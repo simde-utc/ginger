@@ -42,7 +42,7 @@ $app->error(function (\Exception $e) use ($app) {
  * 404 hander
  */
 $app->notFound(function () use ($app) {
-	$app->render('error.json.php', array('code'=>404, 'message'=>ApiException::http[404]), 404);
+	$app->render('error.json.php', array('code'=>404, 'message'=>ApiException::$http[404]), 404);
 });
 
 
