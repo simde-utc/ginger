@@ -6,11 +6,14 @@ class Ginger {
 	
 	public function __construct($key) {
 		if (empty($key)) {
-			throw new Exception("You need a key bastard !!");
+			throw new ApiException(401);
 		}
+		
 		$this->auth = AuthkeyQuery::create()
-						->filterByCle($key)
-            ->findOne();
+            ->findOneByCle($key);
+		
+		if(!$this->auth)
+			throw new ApiException(403);
 	}
 
 	public function getPersonneDetails($login) {
@@ -20,7 +23,6 @@ class Ginger {
 		if(!$personne)
 			throw new ApiException(404);
 		
-		
 		$retour = array(
 				"nom" => $personne->getNom(),
 				"prenom" => $personne->getPrenom(),
@@ -29,14 +31,15 @@ class Ginger {
 				"is_adulte" => $personne->getIsAdulte()
 		);
 		
-		if($this->auth->getDroitBadges())
+		if($this->auth->getDroitBadges()){
+			$badge = array(
+					"badge_uid" => $personne->getBadgeUid(),
+					"expiration_badge" => $personne->getExpirationBadge()
+			);
+			$badge = array_merge($retour, $badge);
+		}
 
-		if ($this->auth->getDroits() == "etendu") {
-			return $personne->getDetailsEtendu();
-		}
-		else {
-			return $personne->getDetailsSimple();
-		}
+		return $retour;
 	}
 
 	public function findPersonne($loginPart) {
