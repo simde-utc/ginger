@@ -52,6 +52,12 @@ $app->get('/v1/:login', function ($login) use ($app) {
 	$app->render('success.json.php', array('result'=>$r));
 });
 
+$app->get('/v1/:login/cotisations', function ($login) use ($app) {
+	$ginger = new Ginger($_GET['key']);
+	$r = $ginger->getPersonneCotisations($login);
+	$app->render('success.json.php', array('result'=>$r));
+});
+
 $app->get('/v1/find/:loginpart', function ($loginpart) use ($app) {
 	$ginger = new Ginger($_GET['key']);
 	$r = $ginger->findPersonne($loginpart);

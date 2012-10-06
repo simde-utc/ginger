@@ -43,6 +43,20 @@ class Ginger {
 		return $retour;
 	}
 
+	public function getPersonneCotisations($login) {
+		// TODO Auth
+		$personne = PersonneQuery::create()->findOneByLogin($login);
+		if(!$personne)
+			throw new ApiException(404);
+
+		$cotisations = $personne->getCotisations();
+		$r = array();
+		foreach($cotisations as $cotisation) {
+			$r[] = $cotisation->toJSON();
+		}
+		return $r;
+	}
+
 	public function findPersonne($loginPart) {
 		return Personne::find($loginPart);
 	}
