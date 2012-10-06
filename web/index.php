@@ -9,21 +9,33 @@ set_include_path("../build/classes" . PATH_SEPARATOR . get_include_path());
 
 \Slim\Slim::registerAutoloader();
 
-$app = new \Slim\Slim();
+$app = new \Slim\Slim(array(
+    'debug' => false,
+    'templates.path' => '../templates'
+));
 $app->contentType('application/json; charset=utf-8');
-$api = new Api($app);
 
 require_once '../class/ginger.class.php';
 
-
-$app->get('/v1/:login', function ($login) use ($api) {
-	$ginger = new Ginger($_GET['key']);
-	$api->call_func(array($ginger, 'getPersonneDetails'), array($login));
+$app->error(function (\Exception $e) use ($app) {
+	$resul = array();
+	$result['error'] = $e->getMessage();
+	$code = 400;
+	$app->render('error.json.php', array('code'=>$code, 'message'=>$e->getMessage()), $code);
 });
 
-$app->get('/v1/find/:loginpart', function ($loginpart) use ($api) {
+$app->notFound(function () use ($app) {
+    $app->render('404.json.php');
+});
+
+$app->get('/v1/:login', function ($login) use ($app) {
 	$ginger = new Ginger($_GET['key']);
-	$api->call_func(array($ginger, 'findPersonne'), array($loginpart));
+	$ginger->getPersonneDetails($login);
+});
+
+$app->get('/v1/find/:loginpart', function ($loginpart) use ($app) {
+	$ginger = new Ginger($_GET['key']);
+	$ginger->findPersonne($loginpart);
 });
 
 
