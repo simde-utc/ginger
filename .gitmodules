@@ -1,0 +1,6 @@
+[submodule "lib/activerecord"]
+	path = lib/activerecord
+	url = git://github.com/kla/php-activerecord.git
+[submodule "lib/propel"]
+	path = lib/propel
+	url = git://github.com/propelorm/Propel.git
