@@ -45,5 +45,27 @@ class Ginger {
 	public function findPersonne($loginPart) {
 		return Personne::find($loginPart);
 	}
+
+	public function addCotisation($login, $debut, $fin) {
+		// vérification des droits en écriture
+		if(!$this->auth->getDroitEcriture())
+			throw new ApiException(403);
+
+		// récupération de la personne concernée
+		$personne = PersonneQuery::create()
+						->findOneByLogin($login);
+		if(!$personne)
+			throw new ApiException(404);
+
+		// création de la nouvelle cotisation
+		$cotisation = new Cotisation();
+		$cotisation->setDebut($debut);
+		$cotisation->setFin($fin);
+		$cotisation->setPersonne($personne);
+		// sauvegarde
+		$cotisation->save();
+
+		return $cotisation->getid();
+	}
 }
 

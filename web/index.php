@@ -19,7 +19,7 @@ require_once '../class/ginger.class.php';
  * Check la presence de l'api key
  */
 $app->hook('slim.before.dispatch', function () {
-	if(empty($_GET['key']))
+	if(empty($_GET['key']) and empty($_POST['key']))
 		throw new ApiException(401);
 });
 
@@ -55,6 +55,14 @@ $app->get('/v1/:login', function ($login) use ($app) {
 $app->get('/v1/find/:loginpart', function ($loginpart) use ($app) {
 	$ginger = new Ginger($_GET['key']);
 	$r = $ginger->findPersonne($loginpart);
+	$app->render('success.json.php', array('result'=>$r));
+});
+
+$app->post('/v1/:login/cotisations', function ($login) use ($app) {
+	$ginger = new Ginger($_POST['key']);
+	if (empty($_POST['debut']) or empty($_POST['fin']))
+		throw new ApiException(400);
+	$r = $ginger->addCotisation($login, strtotime($_POST['debut']), strtotime($_POST['fin']));
 	$app->render('success.json.php', array('result'=>$r));
 });
 
