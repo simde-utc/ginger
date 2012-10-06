@@ -1,4 +1,5 @@
 <?php
+require_once 'ApiException.class.php';
 
 class Ginger {
 	protected $auth;
@@ -15,6 +16,10 @@ class Ginger {
 	public function getPersonneDetails($login) {
 		$personne = PersonneQuery::create()
 						->findOneByLogin($login);
+		
+		if(!$personne)
+			throw new ApiException(404);
+		
 		
 		$retour = array(
 				"nom" => $personne->getNom(),
