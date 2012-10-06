@@ -55,15 +55,15 @@ abstract class BaseAuthkey extends BaseObject implements Persistent
 
     /**
      * The value for the droit_ecriture field.
-     * Note: this column has a database default value of: 0
-     * @var        int
+     * Note: this column has a database default value of: false
+     * @var        boolean
      */
     protected $droit_ecriture;
 
     /**
      * The value for the droit_badges field.
-     * Note: this column has a database default value of: 0
-     * @var        int
+     * Note: this column has a database default value of: false
+     * @var        boolean
      */
     protected $droit_badges;
 
@@ -101,8 +101,8 @@ abstract class BaseAuthkey extends BaseObject implements Persistent
      */
     public function applyDefaultValues()
     {
-        $this->droit_ecriture = 0;
-        $this->droit_badges = 0;
+        $this->droit_ecriture = false;
+        $this->droit_badges = false;
     }
 
     /**
@@ -158,7 +158,7 @@ abstract class BaseAuthkey extends BaseObject implements Persistent
     /**
      * Get the [droit_ecriture] column value.
      *
-     * @return int
+     * @return boolean
      */
     public function getDroitEcriture()
     {
@@ -168,7 +168,7 @@ abstract class BaseAuthkey extends BaseObject implements Persistent
     /**
      * Get the [droit_badges] column value.
      *
-     * @return int
+     * @return boolean
      */
     public function getDroitBadges()
     {
@@ -334,15 +334,23 @@ abstract class BaseAuthkey extends BaseObject implements Persistent
     } // setCle()
 
     /**
-     * Set the value of [droit_ecriture] column.
+     * Sets the value of the [droit_ecriture] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
      *
-     * @param int $v new value
+     * @param boolean|integer|string $v The new value
      * @return Authkey The current object (for fluent API support)
      */
     public function setDroitEcriture($v)
     {
         if ($v !== null) {
-            $v = (int) $v;
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
         }
 
         if ($this->droit_ecriture !== $v) {
@@ -355,15 +363,23 @@ abstract class BaseAuthkey extends BaseObject implements Persistent
     } // setDroitEcriture()
 
     /**
-     * Set the value of [droit_badges] column.
+     * Sets the value of the [droit_badges] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
      *
-     * @param int $v new value
+     * @param boolean|integer|string $v The new value
      * @return Authkey The current object (for fluent API support)
      */
     public function setDroitBadges($v)
     {
         if ($v !== null) {
-            $v = (int) $v;
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
         }
 
         if ($this->droit_badges !== $v) {
@@ -431,11 +447,11 @@ abstract class BaseAuthkey extends BaseObject implements Persistent
      */
     public function hasOnlyDefaultValues()
     {
-            if ($this->droit_ecriture !== 0) {
+            if ($this->droit_ecriture !== false) {
                 return false;
             }
 
-            if ($this->droit_badges !== 0) {
+            if ($this->droit_badges !== false) {
                 return false;
             }
 
@@ -465,8 +481,8 @@ abstract class BaseAuthkey extends BaseObject implements Persistent
             $this->asso = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
             $this->details = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
             $this->cle = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
-            $this->droit_ecriture = ($row[$startcol + 4] !== null) ? (int) $row[$startcol + 4] : null;
-            $this->droit_badges = ($row[$startcol + 5] !== null) ? (int) $row[$startcol + 5] : null;
+            $this->droit_ecriture = ($row[$startcol + 4] !== null) ? (boolean) $row[$startcol + 4] : null;
+            $this->droit_badges = ($row[$startcol + 5] !== null) ? (boolean) $row[$startcol + 5] : null;
             $this->created_at = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
             $this->updated_at = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
             $this->resetModified();
@@ -748,10 +764,10 @@ abstract class BaseAuthkey extends BaseObject implements Persistent
                         $stmt->bindValue($identifier, $this->cle, PDO::PARAM_STR);
                         break;
                     case '`DROIT_ECRITURE`':
-                        $stmt->bindValue($identifier, $this->droit_ecriture, PDO::PARAM_INT);
+                        $stmt->bindValue($identifier, (int) $this->droit_ecriture, PDO::PARAM_INT);
                         break;
                     case '`DROIT_BADGES`':
-                        $stmt->bindValue($identifier, $this->droit_badges, PDO::PARAM_INT);
+                        $stmt->bindValue($identifier, (int) $this->droit_badges, PDO::PARAM_INT);
                         break;
                     case '`CREATED_AT`':
                         $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);

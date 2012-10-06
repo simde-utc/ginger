@@ -42,8 +42,8 @@ class AuthkeyTableMap extends TableMap
         $this->addColumn('ASSO', 'Asso', 'VARCHAR', true, 200, null);
         $this->addColumn('DETAILS', 'Details', 'VARCHAR', true, 1000, null);
         $this->addColumn('CLE', 'Cle', 'VARCHAR', true, 50, null);
-        $this->addColumn('DROIT_ECRITURE', 'DroitEcriture', 'INTEGER', true, null, 0);
-        $this->addColumn('DROIT_BADGES', 'DroitBadges', 'INTEGER', true, null, 0);
+        $this->addColumn('DROIT_ECRITURE', 'DroitEcriture', 'BOOLEAN', true, 1, false);
+        $this->addColumn('DROIT_BADGES', 'DroitBadges', 'BOOLEAN', true, 1, false);
         $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
         // validators

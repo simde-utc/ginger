@@ -52,7 +52,7 @@ class PersonneTableMap extends TableMap
   4 => 'ext',
 ));
         $this->addColumn('DATE_NAISSANCE', 'DateNaissance', 'DATE', false, null, null);
-        $this->addColumn('IS_ADULTE', 'IsAdulte', 'INTEGER', true, null, null);
+        $this->addColumn('IS_ADULTE', 'IsAdulte', 'BOOLEAN', true, 1, null);
         $this->addColumn('BADGE_UID', 'BadgeUid', 'VARCHAR', false, 10, null);
         $this->addColumn('EXPIRATION_BADGE', 'ExpirationBadge', 'DATE', false, null, null);
         $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);

@@ -73,7 +73,7 @@ abstract class BasePersonne extends BaseObject implements Persistent
 
     /**
      * The value for the is_adulte field.
-     * @var        int
+     * @var        boolean
      */
     protected $is_adulte;
 
@@ -236,7 +236,7 @@ abstract class BasePersonne extends BaseObject implements Persistent
     /**
      * Get the [is_adulte] column value.
      *
-     * @return int
+     * @return boolean
      */
     public function getIsAdulte()
     {
@@ -519,15 +519,23 @@ abstract class BasePersonne extends BaseObject implements Persistent
     } // setDateNaissance()
 
     /**
-     * Set the value of [is_adulte] column.
+     * Sets the value of the [is_adulte] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
      *
-     * @param int $v new value
+     * @param boolean|integer|string $v The new value
      * @return Personne The current object (for fluent API support)
      */
     public function setIsAdulte($v)
     {
         if ($v !== null) {
-            $v = (int) $v;
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
         }
 
         if ($this->is_adulte !== $v) {
@@ -668,7 +676,7 @@ abstract class BasePersonne extends BaseObject implements Persistent
             $this->mail = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
             $this->type = ($row[$startcol + 5] !== null) ? (int) $row[$startcol + 5] : null;
             $this->date_naissance = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
-            $this->is_adulte = ($row[$startcol + 7] !== null) ? (int) $row[$startcol + 7] : null;
+            $this->is_adulte = ($row[$startcol + 7] !== null) ? (boolean) $row[$startcol + 7] : null;
             $this->badge_uid = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
             $this->expiration_badge = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
             $this->created_at = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
@@ -992,7 +1000,7 @@ abstract class BasePersonne extends BaseObject implements Persistent
                         $stmt->bindValue($identifier, $this->date_naissance, PDO::PARAM_STR);
                         break;
                     case '`IS_ADULTE`':
-                        $stmt->bindValue($identifier, $this->is_adulte, PDO::PARAM_INT);
+                        $stmt->bindValue($identifier, (int) $this->is_adulte, PDO::PARAM_INT);
                         break;
                     case '`BADGE_UID`':
                         $stmt->bindValue($identifier, $this->badge_uid, PDO::PARAM_STR);
