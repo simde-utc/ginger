@@ -19,7 +19,8 @@ require_once '../class/ginger.class.php';
  * Check la presence de l'api key
  */
 $app->hook('slim.before.dispatch', function () {
-	// TODO
+	if(empty($_GET['key']))
+		throw new ApiException(401);
 });
 
 
