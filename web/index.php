@@ -28,7 +28,7 @@ $app->hook('slim.before.dispatch', function () {
  */
 $app->error(function (\Exception $e) use ($app) {
 	if (!($e instanceof ApiException)) {
-		$code = 400;
+		$code = 500;
 	}
 	else {
 		$code = $e->getCode();
@@ -41,18 +41,20 @@ $app->error(function (\Exception $e) use ($app) {
  * 404 hander
  */
 $app->notFound(function () use ($app) {
-    $app->render('404.json.php');
+	$app->render('error.json.php', array('code'=>404, 'message'=>ApiException::http[404]), 404);
 });
 
 
 $app->get('/v1/:login', function ($login) use ($app) {
 	$ginger = new Ginger($_GET['key']);
-	$ginger->getPersonneDetails($login);
+	$r = $ginger->getPersonneDetails($login);
+	$app->render('success.json.php', array('result'=>$r));
 });
 
 $app->get('/v1/find/:loginpart', function ($loginpart) use ($app) {
 	$ginger = new Ginger($_GET['key']);
-	$ginger->findPersonne($loginpart);
+	$r = $ginger->findPersonne($loginpart);
+	$app->render('success.json.php', array('result'=>$r));
 });
 
 
