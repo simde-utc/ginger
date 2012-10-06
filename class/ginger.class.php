@@ -28,7 +28,8 @@ class Ginger {
 				"prenom" => $personne->getPrenom(),
 				"mail" => $personne->getMail(),
 				"type" => $personne->getType(),
-				"is_adulte" => $personne->getIsAdulte()
+				"is_adulte" => $personne->getIsAdulte(),
+				"is_cotisant" => $personne->isCotisant()
 		);
 		
 		if($this->auth->getDroitBadges()){

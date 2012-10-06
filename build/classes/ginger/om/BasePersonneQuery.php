@@ -49,7 +49,7 @@
  * @method Personne findOneByMail(string $mail) Return the first Personne filtered by the mail column
  * @method Personne findOneByType(int $type) Return the first Personne filtered by the type column
  * @method Personne findOneByDateNaissance(string $date_naissance) Return the first Personne filtered by the date_naissance column
- * @method Personne findOneByIsAdulte(int $is_adulte) Return the first Personne filtered by the is_adulte column
+ * @method Personne findOneByIsAdulte(boolean $is_adulte) Return the first Personne filtered by the is_adulte column
  * @method Personne findOneByBadgeUid(string $badge_uid) Return the first Personne filtered by the badge_uid column
  * @method Personne findOneByExpirationBadge(string $expiration_badge) Return the first Personne filtered by the expiration_badge column
  * @method Personne findOneByCreatedAt(string $created_at) Return the first Personne filtered by the created_at column
@@ -62,7 +62,7 @@
  * @method array findByMail(string $mail) Return Personne objects filtered by the mail column
  * @method array findByType(int $type) Return Personne objects filtered by the type column
  * @method array findByDateNaissance(string $date_naissance) Return Personne objects filtered by the date_naissance column
- * @method array findByIsAdulte(int $is_adulte) Return Personne objects filtered by the is_adulte column
+ * @method array findByIsAdulte(boolean $is_adulte) Return Personne objects filtered by the is_adulte column
  * @method array findByBadgeUid(string $badge_uid) Return Personne objects filtered by the badge_uid column
  * @method array findByExpirationBadge(string $expiration_badge) Return Personne objects filtered by the expiration_badge column
  * @method array findByCreatedAt(string $created_at) Return Personne objects filtered by the created_at column
@@ -484,37 +484,23 @@ abstract class BasePersonneQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByIsAdulte(1234); // WHERE is_adulte = 1234
-     * $query->filterByIsAdulte(array(12, 34)); // WHERE is_adulte IN (12, 34)
-     * $query->filterByIsAdulte(array('min' => 12)); // WHERE is_adulte > 12
+     * $query->filterByIsAdulte(true); // WHERE is_adulte = true
+     * $query->filterByIsAdulte('yes'); // WHERE is_adulte = true
      * </code>
      *
-     * @param     mixed $isAdulte The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     boolean|string $isAdulte The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return PersonneQuery The current query, for fluid interface
      */
     public function filterByIsAdulte($isAdulte = null, $comparison = null)
     {
-        if (is_array($isAdulte)) {
-            $useMinMax = false;
-            if (isset($isAdulte['min'])) {
-                $this->addUsingAlias(PersonnePeer::IS_ADULTE, $isAdulte['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($isAdulte['max'])) {
-                $this->addUsingAlias(PersonnePeer::IS_ADULTE, $isAdulte['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
+        if (is_string($isAdulte)) {
+            $is_adulte = in_array(strtolower($isAdulte), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
         }
 
         return $this->addUsingAlias(PersonnePeer::IS_ADULTE, $isAdulte, $comparison);

@@ -34,8 +34,8 @@
  * @method Authkey findOneByAsso(string $asso) Return the first Authkey filtered by the asso column
  * @method Authkey findOneByDetails(string $details) Return the first Authkey filtered by the details column
  * @method Authkey findOneByCle(string $cle) Return the first Authkey filtered by the cle column
- * @method Authkey findOneByDroitEcriture(int $droit_ecriture) Return the first Authkey filtered by the droit_ecriture column
- * @method Authkey findOneByDroitBadges(int $droit_badges) Return the first Authkey filtered by the droit_badges column
+ * @method Authkey findOneByDroitEcriture(boolean $droit_ecriture) Return the first Authkey filtered by the droit_ecriture column
+ * @method Authkey findOneByDroitBadges(boolean $droit_badges) Return the first Authkey filtered by the droit_badges column
  * @method Authkey findOneByCreatedAt(string $created_at) Return the first Authkey filtered by the created_at column
  * @method Authkey findOneByUpdatedAt(string $updated_at) Return the first Authkey filtered by the updated_at column
  *
@@ -43,8 +43,8 @@
  * @method array findByAsso(string $asso) Return Authkey objects filtered by the asso column
  * @method array findByDetails(string $details) Return Authkey objects filtered by the details column
  * @method array findByCle(string $cle) Return Authkey objects filtered by the cle column
- * @method array findByDroitEcriture(int $droit_ecriture) Return Authkey objects filtered by the droit_ecriture column
- * @method array findByDroitBadges(int $droit_badges) Return Authkey objects filtered by the droit_badges column
+ * @method array findByDroitEcriture(boolean $droit_ecriture) Return Authkey objects filtered by the droit_ecriture column
+ * @method array findByDroitBadges(boolean $droit_badges) Return Authkey objects filtered by the droit_badges column
  * @method array findByCreatedAt(string $created_at) Return Authkey objects filtered by the created_at column
  * @method array findByUpdatedAt(string $updated_at) Return Authkey objects filtered by the updated_at column
  *
@@ -358,37 +358,23 @@ abstract class BaseAuthkeyQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByDroitEcriture(1234); // WHERE droit_ecriture = 1234
-     * $query->filterByDroitEcriture(array(12, 34)); // WHERE droit_ecriture IN (12, 34)
-     * $query->filterByDroitEcriture(array('min' => 12)); // WHERE droit_ecriture > 12
+     * $query->filterByDroitEcriture(true); // WHERE droit_ecriture = true
+     * $query->filterByDroitEcriture('yes'); // WHERE droit_ecriture = true
      * </code>
      *
-     * @param     mixed $droitEcriture The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     boolean|string $droitEcriture The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return AuthkeyQuery The current query, for fluid interface
      */
     public function filterByDroitEcriture($droitEcriture = null, $comparison = null)
     {
-        if (is_array($droitEcriture)) {
-            $useMinMax = false;
-            if (isset($droitEcriture['min'])) {
-                $this->addUsingAlias(AuthkeyPeer::DROIT_ECRITURE, $droitEcriture['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($droitEcriture['max'])) {
-                $this->addUsingAlias(AuthkeyPeer::DROIT_ECRITURE, $droitEcriture['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
+        if (is_string($droitEcriture)) {
+            $droit_ecriture = in_array(strtolower($droitEcriture), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
         }
 
         return $this->addUsingAlias(AuthkeyPeer::DROIT_ECRITURE, $droitEcriture, $comparison);
@@ -399,37 +385,23 @@ abstract class BaseAuthkeyQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByDroitBadges(1234); // WHERE droit_badges = 1234
-     * $query->filterByDroitBadges(array(12, 34)); // WHERE droit_badges IN (12, 34)
-     * $query->filterByDroitBadges(array('min' => 12)); // WHERE droit_badges > 12
+     * $query->filterByDroitBadges(true); // WHERE droit_badges = true
+     * $query->filterByDroitBadges('yes'); // WHERE droit_badges = true
      * </code>
      *
-     * @param     mixed $droitBadges The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     boolean|string $droitBadges The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return AuthkeyQuery The current query, for fluid interface
      */
     public function filterByDroitBadges($droitBadges = null, $comparison = null)
     {
-        if (is_array($droitBadges)) {
-            $useMinMax = false;
-            if (isset($droitBadges['min'])) {
-                $this->addUsingAlias(AuthkeyPeer::DROIT_BADGES, $droitBadges['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($droitBadges['max'])) {
-                $this->addUsingAlias(AuthkeyPeer::DROIT_BADGES, $droitBadges['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
+        if (is_string($droitBadges)) {
+            $droit_badges = in_array(strtolower($droitBadges), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
         }
 
         return $this->addUsingAlias(AuthkeyPeer::DROIT_BADGES, $droitBadges, $comparison);
