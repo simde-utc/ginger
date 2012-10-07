@@ -24,6 +24,7 @@
     <behavior name="timestampable" />
     <unique>
       <unique-column name="login"/>
+      <unique-column name="badge_uid"/>
     </unique>
   </table>
   <table name="authkey" phpName="Authkey">
