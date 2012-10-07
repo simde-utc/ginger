@@ -14,7 +14,7 @@ Pour récupérer propel, faire à la racine :
     git submodule init
     git submodule update
 
-Pour faire fonctionner le script `propel-gen`, il faut installer phing (pas indispensable) :
+Pour faire fonctionner le script `propel-gen`, il faut installer phing :
 
     pear channel-discover pear.phing.info
     sudo pear install phing/phing
