@@ -9,3 +9,4 @@ nbproject
 ehthumbs.db
 Thumbs.db
 /build/conf/ginger-conf.php
+/config.php
