@@ -24,4 +24,39 @@ class Personne extends BasePersonne
 		
 		return !$this->getCotisations($crit)->isEmpty();
 	}
+	
+	public function updateFromAccounts(){
+		if($this->getLogin()){
+			$personneData = AccountsApi::getUserInfo($this->getLogin());
+		}
+		if(!$personneData && $this->getBadgeUid()){
+			$personneData = AccountsApi::cardLookup($this->getBadgeUid());
+		}
+		
+		if($personneData){
+			$this->setLogin($personneData->username);
+			$this->setPrenom(ucfirst(strtolower($personneData->firstName)));
+			$this->setNom(strtoupper($personneData->lastName));
+			$this->setMail($personneData->mail);
+			switch($personneData->profile){
+				case "ETU UTC":
+					$this->setType("etu");
+					break;
+				case "ETU ESCOM":
+					$this->setType("escom");
+					break;
+				case "PERSONNEL":
+					$this->setType("pers");
+					break;
+				case "PERSONNEL ESCOM": // Purement théorique pour l'instant
+				$this->setType("escompers");
+					break;
+			}
+			$this->setBadgeUid($personneData->cardSerialNumber);
+			$this->setExpirationBadge($personneData->cardEndDate/1000);
+			$this->setIsAdulte($personneData->legalAge);
+			return true;
+		}
+		return false;
+	}
 }

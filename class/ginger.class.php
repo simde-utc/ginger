@@ -27,36 +27,20 @@ class Ginger {
 		
 		// Si l'utilisateur est introuvable, on essaie de le récupérer à la DSI
 		if(!$personne){
-			$personneData = AccountsApi::getUserInfo($login);
+			// On créé un nouvel objet
+			$newpersonne = new Personne();
 			
-			// S'il a les droits sur les badges, on essaie aussi avec l'id de badge
-			if(!$personneData && $this->auth->getDroitBadges()){
-				$personneData = AccountsApi::cardLookup($login);
+			// On essaie de set le login
+			$newpersonne->setLogin($login);
+			
+			// Si l'utilisateur a le droit, on essaie de set le badge aussi
+			if($this->auth->getDroitBadges()){
+				$newpersonne->setBadgeUid($login);
 			}
-			
-			if($personneData){
-				$personne = new Personne();
-				$personne->setLogin($personneData->username);
-				$personne->setPrenom(ucfirst(strtolower($personneData->firstName)));
-				$personne->setNom(strtoupper($personneData->lastName));
-				$personne->setMail($personneData->mail);
-				switch($personneData->profile){
-					case "ETU UTC":
-						$personne->setType("etu");
-						break;
-					case "ETU ESCOM":
-						$personne->setType("escom");
-						break;
-					case "PERSONNEL":
-						$personne->setType("pers");
-						break;
-					case "PERSONNEL ESCOM": // Purement théorique pour l'instant
-					$personne->setType("escompers");
-						break;
-				}
-				$personne->setBadgeUid($personneData->cardSerialNumber);
-				$personne->setExpirationBadge($personneData->cardEndDate/1000);
-				$personne->setIsAdulte($personneData->legalAge);
+
+			// Si l'update a réussi, on garde l'objet
+			if($newpersonne->updateFromAccounts()){
+				$personne = $newpersonne;
 				$personne->save();
 			}
 		}
