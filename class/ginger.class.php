@@ -5,24 +5,23 @@ class Ginger {
 	protected $auth;
 	
 	public function __construct($key) {
-		if (empty($key)) {
+		// vérification que la clef est en argument
+		if (empty($key))
 			throw new ApiException(401);
-		}
-		
-		$this->auth = AuthkeyQuery::create()
-            ->findOneByCle($key);
-		
+
+		// vérification que la clef est dans la base
+		$this->auth = AuthkeyQuery::create()->findOneByCle($key);
 		if(!$this->auth)
 			throw new ApiException(403);
 	}
 
 	public function getPersonneDetails($login) {
-		$personne = PersonneQuery::create()
-						->findOneByLogin($login);
-		
+		// récupération de la personne
+		$personne = PersonneQuery::create()->findOneByLogin($login);
 		if(!$personne)
 			throw new ApiException(404);
-		
+
+		// création de l'array du retour
 		$retour = array(
 				"nom" => $personne->getNom(),
 				"prenom" => $personne->getPrenom(),
@@ -31,7 +30,8 @@ class Ginger {
 				"is_adulte" => $personne->getIsAdulte(),
 				"is_cotisant" => $personne->isCotisant()
 		);
-		
+
+		// si la personne a les droits badges, alors on envoie aussi les badges
 		if($this->auth->getDroitBadges()){
 			$badge = array(
 					"badge_uid" => $personne->getBadgeUid(),
