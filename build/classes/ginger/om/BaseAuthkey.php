@@ -68,6 +68,13 @@ abstract class BaseAuthkey extends BaseObject implements Persistent
     protected $droit_badges;
 
     /**
+     * The value for the droit_cotisations field.
+     * Note: this column has a database default value of: false
+     * @var        boolean
+     */
+    protected $droit_cotisations;
+
+    /**
      * The value for the created_at field.
      * @var        string
      */
@@ -103,6 +110,7 @@ abstract class BaseAuthkey extends BaseObject implements Persistent
     {
         $this->droit_ecriture = false;
         $this->droit_badges = false;
+        $this->droit_cotisations = false;
     }
 
     /**
@@ -173,6 +181,16 @@ abstract class BaseAuthkey extends BaseObject implements Persistent
     public function getDroitBadges()
     {
         return $this->droit_badges;
+    }
+
+    /**
+     * Get the [droit_cotisations] column value.
+     *
+     * @return boolean
+     */
+    public function getDroitCotisations()
+    {
+        return $this->droit_cotisations;
     }
 
     /**
@@ -392,6 +410,35 @@ abstract class BaseAuthkey extends BaseObject implements Persistent
     } // setDroitBadges()
 
     /**
+     * Sets the value of the [droit_cotisations] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     *
+     * @param boolean|integer|string $v The new value
+     * @return Authkey The current object (for fluent API support)
+     */
+    public function setDroitCotisations($v)
+    {
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
+        }
+
+        if ($this->droit_cotisations !== $v) {
+            $this->droit_cotisations = $v;
+            $this->modifiedColumns[] = AuthkeyPeer::DROIT_COTISATIONS;
+        }
+
+
+        return $this;
+    } // setDroitCotisations()
+
+    /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
      *
      * @param mixed $v string, integer (timestamp), or DateTime value.
@@ -455,6 +502,10 @@ abstract class BaseAuthkey extends BaseObject implements Persistent
                 return false;
             }
 
+            if ($this->droit_cotisations !== false) {
+                return false;
+            }
+
         // otherwise, everything was equal, so return true
         return true;
     } // hasOnlyDefaultValues()
@@ -483,8 +534,9 @@ abstract class BaseAuthkey extends BaseObject implements Persistent
             $this->cle = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
             $this->droit_ecriture = ($row[$startcol + 4] !== null) ? (boolean) $row[$startcol + 4] : null;
             $this->droit_badges = ($row[$startcol + 5] !== null) ? (boolean) $row[$startcol + 5] : null;
-            $this->created_at = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
-            $this->updated_at = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+            $this->droit_cotisations = ($row[$startcol + 6] !== null) ? (boolean) $row[$startcol + 6] : null;
+            $this->created_at = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+            $this->updated_at = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -493,7 +545,7 @@ abstract class BaseAuthkey extends BaseObject implements Persistent
                 $this->ensureConsistency();
             }
 
-            return $startcol + 8; // 8 = AuthkeyPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 9; // 9 = AuthkeyPeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Authkey object", $e);
@@ -734,6 +786,9 @@ abstract class BaseAuthkey extends BaseObject implements Persistent
         if ($this->isColumnModified(AuthkeyPeer::DROIT_BADGES)) {
             $modifiedColumns[':p' . $index++]  = '`DROIT_BADGES`';
         }
+        if ($this->isColumnModified(AuthkeyPeer::DROIT_COTISATIONS)) {
+            $modifiedColumns[':p' . $index++]  = '`DROIT_COTISATIONS`';
+        }
         if ($this->isColumnModified(AuthkeyPeer::CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = '`CREATED_AT`';
         }
@@ -768,6 +823,9 @@ abstract class BaseAuthkey extends BaseObject implements Persistent
                         break;
                     case '`DROIT_BADGES`':
                         $stmt->bindValue($identifier, (int) $this->droit_badges, PDO::PARAM_INT);
+                        break;
+                    case '`DROIT_COTISATIONS`':
+                        $stmt->bindValue($identifier, (int) $this->droit_cotisations, PDO::PARAM_INT);
                         break;
                     case '`CREATED_AT`':
                         $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
@@ -928,9 +986,12 @@ abstract class BaseAuthkey extends BaseObject implements Persistent
                 return $this->getDroitBadges();
                 break;
             case 6:
-                return $this->getCreatedAt();
+                return $this->getDroitCotisations();
                 break;
             case 7:
+                return $this->getCreatedAt();
+                break;
+            case 8:
                 return $this->getUpdatedAt();
                 break;
             default:
@@ -967,8 +1028,9 @@ abstract class BaseAuthkey extends BaseObject implements Persistent
             $keys[3] => $this->getCle(),
             $keys[4] => $this->getDroitEcriture(),
             $keys[5] => $this->getDroitBadges(),
-            $keys[6] => $this->getCreatedAt(),
-            $keys[7] => $this->getUpdatedAt(),
+            $keys[6] => $this->getDroitCotisations(),
+            $keys[7] => $this->getCreatedAt(),
+            $keys[8] => $this->getUpdatedAt(),
         );
 
         return $result;
@@ -1022,9 +1084,12 @@ abstract class BaseAuthkey extends BaseObject implements Persistent
                 $this->setDroitBadges($value);
                 break;
             case 6:
-                $this->setCreatedAt($value);
+                $this->setDroitCotisations($value);
                 break;
             case 7:
+                $this->setCreatedAt($value);
+                break;
+            case 8:
                 $this->setUpdatedAt($value);
                 break;
         } // switch()
@@ -1057,8 +1122,9 @@ abstract class BaseAuthkey extends BaseObject implements Persistent
         if (array_key_exists($keys[3], $arr)) $this->setCle($arr[$keys[3]]);
         if (array_key_exists($keys[4], $arr)) $this->setDroitEcriture($arr[$keys[4]]);
         if (array_key_exists($keys[5], $arr)) $this->setDroitBadges($arr[$keys[5]]);
-        if (array_key_exists($keys[6], $arr)) $this->setCreatedAt($arr[$keys[6]]);
-        if (array_key_exists($keys[7], $arr)) $this->setUpdatedAt($arr[$keys[7]]);
+        if (array_key_exists($keys[6], $arr)) $this->setDroitCotisations($arr[$keys[6]]);
+        if (array_key_exists($keys[7], $arr)) $this->setCreatedAt($arr[$keys[7]]);
+        if (array_key_exists($keys[8], $arr)) $this->setUpdatedAt($arr[$keys[8]]);
     }
 
     /**
@@ -1076,6 +1142,7 @@ abstract class BaseAuthkey extends BaseObject implements Persistent
         if ($this->isColumnModified(AuthkeyPeer::CLE)) $criteria->add(AuthkeyPeer::CLE, $this->cle);
         if ($this->isColumnModified(AuthkeyPeer::DROIT_ECRITURE)) $criteria->add(AuthkeyPeer::DROIT_ECRITURE, $this->droit_ecriture);
         if ($this->isColumnModified(AuthkeyPeer::DROIT_BADGES)) $criteria->add(AuthkeyPeer::DROIT_BADGES, $this->droit_badges);
+        if ($this->isColumnModified(AuthkeyPeer::DROIT_COTISATIONS)) $criteria->add(AuthkeyPeer::DROIT_COTISATIONS, $this->droit_cotisations);
         if ($this->isColumnModified(AuthkeyPeer::CREATED_AT)) $criteria->add(AuthkeyPeer::CREATED_AT, $this->created_at);
         if ($this->isColumnModified(AuthkeyPeer::UPDATED_AT)) $criteria->add(AuthkeyPeer::UPDATED_AT, $this->updated_at);
 
@@ -1146,6 +1213,7 @@ abstract class BaseAuthkey extends BaseObject implements Persistent
         $copyObj->setCle($this->getCle());
         $copyObj->setDroitEcriture($this->getDroitEcriture());
         $copyObj->setDroitBadges($this->getDroitBadges());
+        $copyObj->setDroitCotisations($this->getDroitCotisations());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
         if ($makeNew) {
@@ -1205,6 +1273,7 @@ abstract class BaseAuthkey extends BaseObject implements Persistent
         $this->cle = null;
         $this->droit_ecriture = null;
         $this->droit_badges = null;
+        $this->droit_cotisations = null;
         $this->created_at = null;
         $this->updated_at = null;
         $this->alreadyInSave = false;

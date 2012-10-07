@@ -62,6 +62,7 @@ CREATE TABLE `authkey`
     `cle` VARCHAR(50) NOT NULL,
     `droit_ecriture` TINYINT(1) DEFAULT 0 NOT NULL,
     `droit_badges` TINYINT(1) DEFAULT 0 NOT NULL,
+    `droit_cotisations` TINYINT(1) DEFAULT 0 NOT NULL,
     `created_at` DATETIME,
     `updated_at` DATETIME,
     PRIMARY KEY (`id`),

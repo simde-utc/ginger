@@ -12,6 +12,7 @@
  * @method AuthkeyQuery orderByCle($order = Criteria::ASC) Order by the cle column
  * @method AuthkeyQuery orderByDroitEcriture($order = Criteria::ASC) Order by the droit_ecriture column
  * @method AuthkeyQuery orderByDroitBadges($order = Criteria::ASC) Order by the droit_badges column
+ * @method AuthkeyQuery orderByDroitCotisations($order = Criteria::ASC) Order by the droit_cotisations column
  * @method AuthkeyQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method AuthkeyQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
@@ -21,6 +22,7 @@
  * @method AuthkeyQuery groupByCle() Group by the cle column
  * @method AuthkeyQuery groupByDroitEcriture() Group by the droit_ecriture column
  * @method AuthkeyQuery groupByDroitBadges() Group by the droit_badges column
+ * @method AuthkeyQuery groupByDroitCotisations() Group by the droit_cotisations column
  * @method AuthkeyQuery groupByCreatedAt() Group by the created_at column
  * @method AuthkeyQuery groupByUpdatedAt() Group by the updated_at column
  *
@@ -36,6 +38,7 @@
  * @method Authkey findOneByCle(string $cle) Return the first Authkey filtered by the cle column
  * @method Authkey findOneByDroitEcriture(boolean $droit_ecriture) Return the first Authkey filtered by the droit_ecriture column
  * @method Authkey findOneByDroitBadges(boolean $droit_badges) Return the first Authkey filtered by the droit_badges column
+ * @method Authkey findOneByDroitCotisations(boolean $droit_cotisations) Return the first Authkey filtered by the droit_cotisations column
  * @method Authkey findOneByCreatedAt(string $created_at) Return the first Authkey filtered by the created_at column
  * @method Authkey findOneByUpdatedAt(string $updated_at) Return the first Authkey filtered by the updated_at column
  *
@@ -45,6 +48,7 @@
  * @method array findByCle(string $cle) Return Authkey objects filtered by the cle column
  * @method array findByDroitEcriture(boolean $droit_ecriture) Return Authkey objects filtered by the droit_ecriture column
  * @method array findByDroitBadges(boolean $droit_badges) Return Authkey objects filtered by the droit_badges column
+ * @method array findByDroitCotisations(boolean $droit_cotisations) Return Authkey objects filtered by the droit_cotisations column
  * @method array findByCreatedAt(string $created_at) Return Authkey objects filtered by the created_at column
  * @method array findByUpdatedAt(string $updated_at) Return Authkey objects filtered by the updated_at column
  *
@@ -150,7 +154,7 @@ abstract class BaseAuthkeyQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `ID`, `ASSO`, `DETAILS`, `CLE`, `DROIT_ECRITURE`, `DROIT_BADGES`, `CREATED_AT`, `UPDATED_AT` FROM `authkey` WHERE `ID` = :p0';
+        $sql = 'SELECT `ID`, `ASSO`, `DETAILS`, `CLE`, `DROIT_ECRITURE`, `DROIT_BADGES`, `DROIT_COTISATIONS`, `CREATED_AT`, `UPDATED_AT` FROM `authkey` WHERE `ID` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -405,6 +409,33 @@ abstract class BaseAuthkeyQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(AuthkeyPeer::DROIT_BADGES, $droitBadges, $comparison);
+    }
+
+    /**
+     * Filter the query on the droit_cotisations column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByDroitCotisations(true); // WHERE droit_cotisations = true
+     * $query->filterByDroitCotisations('yes'); // WHERE droit_cotisations = true
+     * </code>
+     *
+     * @param     boolean|string $droitCotisations The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return AuthkeyQuery The current query, for fluid interface
+     */
+    public function filterByDroitCotisations($droitCotisations = null, $comparison = null)
+    {
+        if (is_string($droitCotisations)) {
+            $droit_cotisations = in_array(strtolower($droitCotisations), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        }
+
+        return $this->addUsingAlias(AuthkeyPeer::DROIT_COTISATIONS, $droitCotisations, $comparison);
     }
 
     /**

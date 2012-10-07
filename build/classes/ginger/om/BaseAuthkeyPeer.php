@@ -24,13 +24,13 @@ abstract class BaseAuthkeyPeer
     const TM_CLASS = 'AuthkeyTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 8;
+    const NUM_COLUMNS = 9;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 8;
+    const NUM_HYDRATE_COLUMNS = 9;
 
     /** the column name for the ID field */
     const ID = 'authkey.ID';
@@ -49,6 +49,9 @@ abstract class BaseAuthkeyPeer
 
     /** the column name for the DROIT_BADGES field */
     const DROIT_BADGES = 'authkey.DROIT_BADGES';
+
+    /** the column name for the DROIT_COTISATIONS field */
+    const DROIT_COTISATIONS = 'authkey.DROIT_COTISATIONS';
 
     /** the column name for the CREATED_AT field */
     const CREATED_AT = 'authkey.CREATED_AT';
@@ -75,12 +78,12 @@ abstract class BaseAuthkeyPeer
      * e.g. AuthkeyPeer::$fieldNames[AuthkeyPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Id', 'Asso', 'Details', 'Cle', 'DroitEcriture', 'DroitBadges', 'CreatedAt', 'UpdatedAt', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'asso', 'details', 'cle', 'droitEcriture', 'droitBadges', 'createdAt', 'updatedAt', ),
-        BasePeer::TYPE_COLNAME => array (AuthkeyPeer::ID, AuthkeyPeer::ASSO, AuthkeyPeer::DETAILS, AuthkeyPeer::CLE, AuthkeyPeer::DROIT_ECRITURE, AuthkeyPeer::DROIT_BADGES, AuthkeyPeer::CREATED_AT, AuthkeyPeer::UPDATED_AT, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'ASSO', 'DETAILS', 'CLE', 'DROIT_ECRITURE', 'DROIT_BADGES', 'CREATED_AT', 'UPDATED_AT', ),
-        BasePeer::TYPE_FIELDNAME => array ('id', 'asso', 'details', 'cle', 'droit_ecriture', 'droit_badges', 'created_at', 'updated_at', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
+        BasePeer::TYPE_PHPNAME => array ('Id', 'Asso', 'Details', 'Cle', 'DroitEcriture', 'DroitBadges', 'DroitCotisations', 'CreatedAt', 'UpdatedAt', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'asso', 'details', 'cle', 'droitEcriture', 'droitBadges', 'droitCotisations', 'createdAt', 'updatedAt', ),
+        BasePeer::TYPE_COLNAME => array (AuthkeyPeer::ID, AuthkeyPeer::ASSO, AuthkeyPeer::DETAILS, AuthkeyPeer::CLE, AuthkeyPeer::DROIT_ECRITURE, AuthkeyPeer::DROIT_BADGES, AuthkeyPeer::DROIT_COTISATIONS, AuthkeyPeer::CREATED_AT, AuthkeyPeer::UPDATED_AT, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'ASSO', 'DETAILS', 'CLE', 'DROIT_ECRITURE', 'DROIT_BADGES', 'DROIT_COTISATIONS', 'CREATED_AT', 'UPDATED_AT', ),
+        BasePeer::TYPE_FIELDNAME => array ('id', 'asso', 'details', 'cle', 'droit_ecriture', 'droit_badges', 'droit_cotisations', 'created_at', 'updated_at', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
     );
 
     /**
@@ -90,12 +93,12 @@ abstract class BaseAuthkeyPeer
      * e.g. AuthkeyPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Asso' => 1, 'Details' => 2, 'Cle' => 3, 'DroitEcriture' => 4, 'DroitBadges' => 5, 'CreatedAt' => 6, 'UpdatedAt' => 7, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'asso' => 1, 'details' => 2, 'cle' => 3, 'droitEcriture' => 4, 'droitBadges' => 5, 'createdAt' => 6, 'updatedAt' => 7, ),
-        BasePeer::TYPE_COLNAME => array (AuthkeyPeer::ID => 0, AuthkeyPeer::ASSO => 1, AuthkeyPeer::DETAILS => 2, AuthkeyPeer::CLE => 3, AuthkeyPeer::DROIT_ECRITURE => 4, AuthkeyPeer::DROIT_BADGES => 5, AuthkeyPeer::CREATED_AT => 6, AuthkeyPeer::UPDATED_AT => 7, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'ASSO' => 1, 'DETAILS' => 2, 'CLE' => 3, 'DROIT_ECRITURE' => 4, 'DROIT_BADGES' => 5, 'CREATED_AT' => 6, 'UPDATED_AT' => 7, ),
-        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'asso' => 1, 'details' => 2, 'cle' => 3, 'droit_ecriture' => 4, 'droit_badges' => 5, 'created_at' => 6, 'updated_at' => 7, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
+        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Asso' => 1, 'Details' => 2, 'Cle' => 3, 'DroitEcriture' => 4, 'DroitBadges' => 5, 'DroitCotisations' => 6, 'CreatedAt' => 7, 'UpdatedAt' => 8, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'asso' => 1, 'details' => 2, 'cle' => 3, 'droitEcriture' => 4, 'droitBadges' => 5, 'droitCotisations' => 6, 'createdAt' => 7, 'updatedAt' => 8, ),
+        BasePeer::TYPE_COLNAME => array (AuthkeyPeer::ID => 0, AuthkeyPeer::ASSO => 1, AuthkeyPeer::DETAILS => 2, AuthkeyPeer::CLE => 3, AuthkeyPeer::DROIT_ECRITURE => 4, AuthkeyPeer::DROIT_BADGES => 5, AuthkeyPeer::DROIT_COTISATIONS => 6, AuthkeyPeer::CREATED_AT => 7, AuthkeyPeer::UPDATED_AT => 8, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'ASSO' => 1, 'DETAILS' => 2, 'CLE' => 3, 'DROIT_ECRITURE' => 4, 'DROIT_BADGES' => 5, 'DROIT_COTISATIONS' => 6, 'CREATED_AT' => 7, 'UPDATED_AT' => 8, ),
+        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'asso' => 1, 'details' => 2, 'cle' => 3, 'droit_ecriture' => 4, 'droit_badges' => 5, 'droit_cotisations' => 6, 'created_at' => 7, 'updated_at' => 8, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
     );
 
     /**
@@ -175,6 +178,7 @@ abstract class BaseAuthkeyPeer
             $criteria->addSelectColumn(AuthkeyPeer::CLE);
             $criteria->addSelectColumn(AuthkeyPeer::DROIT_ECRITURE);
             $criteria->addSelectColumn(AuthkeyPeer::DROIT_BADGES);
+            $criteria->addSelectColumn(AuthkeyPeer::DROIT_COTISATIONS);
             $criteria->addSelectColumn(AuthkeyPeer::CREATED_AT);
             $criteria->addSelectColumn(AuthkeyPeer::UPDATED_AT);
         } else {
@@ -184,6 +188,7 @@ abstract class BaseAuthkeyPeer
             $criteria->addSelectColumn($alias . '.CLE');
             $criteria->addSelectColumn($alias . '.DROIT_ECRITURE');
             $criteria->addSelectColumn($alias . '.DROIT_BADGES');
+            $criteria->addSelectColumn($alias . '.DROIT_COTISATIONS');
             $criteria->addSelectColumn($alias . '.CREATED_AT');
             $criteria->addSelectColumn($alias . '.UPDATED_AT');
         }

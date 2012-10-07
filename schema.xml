@@ -34,6 +34,7 @@
     <column name="cle" type="varchar" size="50" required="true" />
     <column name="droit_ecriture" type="boolean" required="true" default="false"/>
     <column name="droit_badges" type="boolean" required="true" default="false"/>
+    <column name="droit_cotisations" type="boolean" required="true" default="false"/>
     <behavior name="timestampable" />
     <unique>
       <unique-column name="cle"/>

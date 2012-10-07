@@ -89,7 +89,10 @@ class Ginger {
 	}
 
 	public function getPersonneCotisations($login) {
-		// TODO Auth
+		// Vérification des droits
+		if(!$this->auth->getDroitCotisations())
+			throw new ApiException(403);
+			
 		$personne = PersonneQuery::create()->findOneByLogin($login);
 		if(!$personne)
 			throw new ApiException(404);
@@ -107,8 +110,8 @@ class Ginger {
 	}
 
 	public function addCotisation($login, $debut, $fin) {
-		// vérification des droits en écriture
-		if(!$this->auth->getDroitEcriture())
+		// vérification des droits en écriture et accès aux cotisations
+		if(!$this->auth->getDroitEcriture() || !$this->auth->getDroitCotisations())
 			throw new ApiException(403);
 
 		// récupération de la personne concernée
