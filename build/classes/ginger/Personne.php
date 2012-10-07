@@ -19,8 +19,8 @@ class Personne extends BasePersonne
 	public function isCotisant()
 	{
 		$crit = new Criteria();
-		$crit->add(CotisationPeer::DEBUT, Criteria::CURRENT_DATE, Criteria::LESS_THAN);
-		$crit->add(CotisationPeer::FIN, Criteria::CURRENT_DATE, Criteria::GREATER_THAN);
+		$crit->add(CotisationPeer::DEBUT, Criteria::CURRENT_DATE, Criteria::LESS_EQUAL);
+		$crit->add(CotisationPeer::FIN, Criteria::CURRENT_DATE, Criteria::GREATER_EQUAL);
 		
 		return !$this->getCotisations($crit)->isEmpty();
 	}
