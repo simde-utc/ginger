@@ -113,7 +113,7 @@ abstract class BaseCotisation extends BaseObject implements Persistent
      * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getDebut($format = '%x')
+    public function getDebut($format = '%F')
     {
         if ($this->debut === null) {
             return null;
@@ -150,7 +150,7 @@ abstract class BaseCotisation extends BaseObject implements Persistent
      * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getFin($format = '%x')
+    public function getFin($format = '%F')
     {
         if ($this->fin === null) {
             return null;

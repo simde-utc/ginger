@@ -205,7 +205,7 @@ abstract class BasePersonne extends BaseObject implements Persistent
      * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getDateNaissance($format = '%x')
+    public function getDateNaissance($format = '%F')
     {
         if ($this->date_naissance === null) {
             return null;
@@ -262,7 +262,7 @@ abstract class BasePersonne extends BaseObject implements Persistent
      * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getExpirationBadge($format = '%x')
+    public function getExpirationBadge($format = '%F')
     {
         if ($this->expiration_badge === null) {
             return null;
