@@ -82,9 +82,13 @@ class Ginger {
 			throw new ApiException(404);
 
 		$cotisations = $personne->getCotisations();
+		
 		$r = array();
 		foreach($cotisations as $cotisation) {
-			$r[] = $cotisation->toJSON();
+			$r[] = array(
+				"debut" => $cotisation->getDebut(),
+				"fin" => $cotisation->getFin(),		
+			);
 		}
 		return $r;
 	}
