@@ -18,11 +18,22 @@ class Ginger {
 
 	public function getPersonneDetails($login) {
 		// récupération de la personne
-		$personne = PersonneQuery::create()->findOneByLogin($login);
+		$personne = PersonneQuery::create('p')
+						->where("p.login = ?", $login)
+						->_if($this->auth->getDroitBadges())
+						->orWhere("p.badgeUid = ?", $login)
+						->_endif()
+						->findOne();
 		
 		// Si l'utilisateur est introuvable, on essaie de le récupérer à la DSI
 		if(!$personne){
 			$personneData = AccountsApi::getUserInfo($login);
+			
+			// S'il a les droits sur les badges, on essaie aussi avec l'id de badge
+			if(!$personneData && $this->auth->getDroitBadges()){
+				$personneData = AccountsApi::cardLookup($login);
+			}
+			
 			if($personneData){
 				$personne = new Personne();
 				$personne->setLogin($personneData->username);
@@ -71,7 +82,7 @@ class Ginger {
 					"badge_uid" => $personne->getBadgeUid(),
 					"expiration_badge" => $personne->getExpirationBadge()
 			);
-			$badge = array_merge($retour, $badge);
+			$retour = array_merge($retour, $badge);
 		}
 
 		return $retour;

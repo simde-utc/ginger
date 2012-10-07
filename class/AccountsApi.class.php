@@ -46,6 +46,13 @@ class AccountsApi {
 		);
 		return AccountsApi::apiCall("getUserInfo", $params);
 	}
+	
+	public static function cardLookup($uid){
+		$params = array(
+				"serialNumber" => $uid
+		);
+		return AccountsApi::apiCall("cardLookup", $params);
+	}
 }
 
 ?>
