@@ -104,7 +104,7 @@ class Ginger {
 		return Personne::find($loginPart);
 	}
 
-	public function addCotisation($login, $debut, $fin) {
+	public function addCotisation($login, $debut, $fin, $montant) {
 		// vérification des droits en écriture et accès aux cotisations
 		if(!$this->auth->getDroitEcriture() || !$this->auth->getDroitCotisations())
 			throw new ApiException(403);
@@ -120,6 +120,7 @@ class Ginger {
 		$cotisation->setDebut($debut);
 		$cotisation->setFin($fin);
 		$cotisation->setPersonne($personne);
+		$cotisation->setMontant($montant);
 		// sauvegarde
 		$cotisation->save();
 

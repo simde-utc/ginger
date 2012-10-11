@@ -73,9 +73,9 @@ $app->get('/v1/find/:loginpart', function ($loginpart) use ($app) {
 // ajout d'une cotisation
 $app->post('/v1/:login/cotisations', function ($login) use ($app) {
 	$ginger = new Ginger($_POST['key']);
-	if (empty($_POST['debut']) or empty($_POST['fin']))
+	if (empty($_POST['debut']) or empty($_POST['fin']) or empty($_POST['montant']))
 		throw new ApiException(400);
-	$r = $ginger->addCotisation($login, strtotime($_POST['debut']), strtotime($_POST['fin']));
+	$r = $ginger->addCotisation($login, strtotime($_POST['debut']), strtotime($_POST['fin']), $_POST['montant']);
 	$app->render('success.json.php', array('result'=>$r));
 });
 
