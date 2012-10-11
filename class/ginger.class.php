@@ -48,6 +48,13 @@ class Ginger {
 		// S'il est toujours introuvable, on renvoie une erreur
 		if(!$personne)
 			throw new ApiException(404);
+		
+		// On a la personne, bien. On met quand même à jour si :
+		// - il est mineur
+		// - on n'a pas son mail (import depuis le fichier des cotisants)
+		if(!$personne->getIsAdulte() || !$personne->getMail()){
+			$personne->updateFromAccounts();
+		}
 
 		// création de l'array du retour
 		$retour = array(
