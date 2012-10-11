@@ -54,6 +54,12 @@ abstract class BaseCotisation extends BaseObject implements Persistent
     protected $fin;
 
     /**
+     * The value for the montant field.
+     * @var        string
+     */
+    protected $montant;
+
+    /**
      * The value for the created_at field.
      * @var        string
      */
@@ -176,6 +182,16 @@ abstract class BaseCotisation extends BaseObject implements Persistent
         } else {
             return $dt->format($format);
         }
+    }
+
+    /**
+     * Get the [montant] column value.
+     *
+     * @return string
+     */
+    public function getMontant()
+    {
+        return $this->montant;
     }
 
     /**
@@ -345,6 +361,27 @@ abstract class BaseCotisation extends BaseObject implements Persistent
     } // setFin()
 
     /**
+     * Set the value of [montant] column.
+     *
+     * @param string $v new value
+     * @return Cotisation The current object (for fluent API support)
+     */
+    public function setMontant($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->montant !== $v) {
+            $this->montant = $v;
+            $this->modifiedColumns[] = CotisationPeer::MONTANT;
+        }
+
+
+        return $this;
+    } // setMontant()
+
+    /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
      *
      * @param mixed $v string, integer (timestamp), or DateTime value.
@@ -426,8 +463,9 @@ abstract class BaseCotisation extends BaseObject implements Persistent
             $this->personne_id = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
             $this->debut = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
             $this->fin = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
-            $this->created_at = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
-            $this->updated_at = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+            $this->montant = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+            $this->created_at = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+            $this->updated_at = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -436,7 +474,7 @@ abstract class BaseCotisation extends BaseObject implements Persistent
                 $this->ensureConsistency();
             }
 
-            return $startcol + 6; // 6 = CotisationPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 7; // 7 = CotisationPeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Cotisation object", $e);
@@ -687,6 +725,9 @@ abstract class BaseCotisation extends BaseObject implements Persistent
         if ($this->isColumnModified(CotisationPeer::FIN)) {
             $modifiedColumns[':p' . $index++]  = '`FIN`';
         }
+        if ($this->isColumnModified(CotisationPeer::MONTANT)) {
+            $modifiedColumns[':p' . $index++]  = '`MONTANT`';
+        }
         if ($this->isColumnModified(CotisationPeer::CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = '`CREATED_AT`';
         }
@@ -715,6 +756,9 @@ abstract class BaseCotisation extends BaseObject implements Persistent
                         break;
                     case '`FIN`':
                         $stmt->bindValue($identifier, $this->fin, PDO::PARAM_STR);
+                        break;
+                    case '`MONTANT`':
+                        $stmt->bindValue($identifier, $this->montant, PDO::PARAM_STR);
                         break;
                     case '`CREATED_AT`':
                         $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
@@ -881,9 +925,12 @@ abstract class BaseCotisation extends BaseObject implements Persistent
                 return $this->getFin();
                 break;
             case 4:
-                return $this->getCreatedAt();
+                return $this->getMontant();
                 break;
             case 5:
+                return $this->getCreatedAt();
+                break;
+            case 6:
                 return $this->getUpdatedAt();
                 break;
             default:
@@ -919,8 +966,9 @@ abstract class BaseCotisation extends BaseObject implements Persistent
             $keys[1] => $this->getPersonneId(),
             $keys[2] => $this->getDebut(),
             $keys[3] => $this->getFin(),
-            $keys[4] => $this->getCreatedAt(),
-            $keys[5] => $this->getUpdatedAt(),
+            $keys[4] => $this->getMontant(),
+            $keys[5] => $this->getCreatedAt(),
+            $keys[6] => $this->getUpdatedAt(),
         );
         if ($includeForeignObjects) {
             if (null !== $this->aPersonne) {
@@ -973,9 +1021,12 @@ abstract class BaseCotisation extends BaseObject implements Persistent
                 $this->setFin($value);
                 break;
             case 4:
-                $this->setCreatedAt($value);
+                $this->setMontant($value);
                 break;
             case 5:
+                $this->setCreatedAt($value);
+                break;
+            case 6:
                 $this->setUpdatedAt($value);
                 break;
         } // switch()
@@ -1006,8 +1057,9 @@ abstract class BaseCotisation extends BaseObject implements Persistent
         if (array_key_exists($keys[1], $arr)) $this->setPersonneId($arr[$keys[1]]);
         if (array_key_exists($keys[2], $arr)) $this->setDebut($arr[$keys[2]]);
         if (array_key_exists($keys[3], $arr)) $this->setFin($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setCreatedAt($arr[$keys[4]]);
-        if (array_key_exists($keys[5], $arr)) $this->setUpdatedAt($arr[$keys[5]]);
+        if (array_key_exists($keys[4], $arr)) $this->setMontant($arr[$keys[4]]);
+        if (array_key_exists($keys[5], $arr)) $this->setCreatedAt($arr[$keys[5]]);
+        if (array_key_exists($keys[6], $arr)) $this->setUpdatedAt($arr[$keys[6]]);
     }
 
     /**
@@ -1023,6 +1075,7 @@ abstract class BaseCotisation extends BaseObject implements Persistent
         if ($this->isColumnModified(CotisationPeer::PERSONNE_ID)) $criteria->add(CotisationPeer::PERSONNE_ID, $this->personne_id);
         if ($this->isColumnModified(CotisationPeer::DEBUT)) $criteria->add(CotisationPeer::DEBUT, $this->debut);
         if ($this->isColumnModified(CotisationPeer::FIN)) $criteria->add(CotisationPeer::FIN, $this->fin);
+        if ($this->isColumnModified(CotisationPeer::MONTANT)) $criteria->add(CotisationPeer::MONTANT, $this->montant);
         if ($this->isColumnModified(CotisationPeer::CREATED_AT)) $criteria->add(CotisationPeer::CREATED_AT, $this->created_at);
         if ($this->isColumnModified(CotisationPeer::UPDATED_AT)) $criteria->add(CotisationPeer::UPDATED_AT, $this->updated_at);
 
@@ -1091,6 +1144,7 @@ abstract class BaseCotisation extends BaseObject implements Persistent
         $copyObj->setPersonneId($this->getPersonneId());
         $copyObj->setDebut($this->getDebut());
         $copyObj->setFin($this->getFin());
+        $copyObj->setMontant($this->getMontant());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
 
@@ -1211,6 +1265,7 @@ abstract class BaseCotisation extends BaseObject implements Persistent
         $this->personne_id = null;
         $this->debut = null;
         $this->fin = null;
+        $this->montant = null;
         $this->created_at = null;
         $this->updated_at = null;
         $this->alreadyInSave = false;

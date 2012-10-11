@@ -42,6 +42,7 @@ class CotisationTableMap extends TableMap
         $this->addForeignKey('PERSONNE_ID', 'PersonneId', 'INTEGER', 'personne', 'ID', true, null, null);
         $this->addColumn('DEBUT', 'Debut', 'DATE', true, null, null);
         $this->addColumn('FIN', 'Fin', 'DATE', true, null, null);
+        $this->addColumn('MONTANT', 'Montant', 'DECIMAL', true, 5, null);
         $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
         // validators

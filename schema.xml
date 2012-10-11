@@ -5,6 +5,7 @@
     <column name="personne_id" type="integer" required="true"/>
     <column name="debut" type="date" required="true" />
     <column name="fin" type="date" required="true"/>
+    <column name="montant" type="decimal" size="5" scale="2" required="true" />
     <behavior name="timestampable" />
     <foreign-key foreignTable="personne" phpName="Personne" refPhpName="Cotisation">
       <reference local="personne_id" foreign="id"/>

@@ -15,6 +15,7 @@ CREATE TABLE `cotisation`
     `personne_id` INTEGER NOT NULL,
     `debut` DATE NOT NULL,
     `fin` DATE NOT NULL,
+    `montant` DECIMAL(5,2) NOT NULL,
     `created_at` DATETIME,
     `updated_at` DATETIME,
     PRIMARY KEY (`id`),

@@ -10,6 +10,7 @@
  * @method CotisationQuery orderByPersonneId($order = Criteria::ASC) Order by the personne_id column
  * @method CotisationQuery orderByDebut($order = Criteria::ASC) Order by the debut column
  * @method CotisationQuery orderByFin($order = Criteria::ASC) Order by the fin column
+ * @method CotisationQuery orderByMontant($order = Criteria::ASC) Order by the montant column
  * @method CotisationQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method CotisationQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
@@ -17,6 +18,7 @@
  * @method CotisationQuery groupByPersonneId() Group by the personne_id column
  * @method CotisationQuery groupByDebut() Group by the debut column
  * @method CotisationQuery groupByFin() Group by the fin column
+ * @method CotisationQuery groupByMontant() Group by the montant column
  * @method CotisationQuery groupByCreatedAt() Group by the created_at column
  * @method CotisationQuery groupByUpdatedAt() Group by the updated_at column
  *
@@ -34,6 +36,7 @@
  * @method Cotisation findOneByPersonneId(int $personne_id) Return the first Cotisation filtered by the personne_id column
  * @method Cotisation findOneByDebut(string $debut) Return the first Cotisation filtered by the debut column
  * @method Cotisation findOneByFin(string $fin) Return the first Cotisation filtered by the fin column
+ * @method Cotisation findOneByMontant(string $montant) Return the first Cotisation filtered by the montant column
  * @method Cotisation findOneByCreatedAt(string $created_at) Return the first Cotisation filtered by the created_at column
  * @method Cotisation findOneByUpdatedAt(string $updated_at) Return the first Cotisation filtered by the updated_at column
  *
@@ -41,6 +44,7 @@
  * @method array findByPersonneId(int $personne_id) Return Cotisation objects filtered by the personne_id column
  * @method array findByDebut(string $debut) Return Cotisation objects filtered by the debut column
  * @method array findByFin(string $fin) Return Cotisation objects filtered by the fin column
+ * @method array findByMontant(string $montant) Return Cotisation objects filtered by the montant column
  * @method array findByCreatedAt(string $created_at) Return Cotisation objects filtered by the created_at column
  * @method array findByUpdatedAt(string $updated_at) Return Cotisation objects filtered by the updated_at column
  *
@@ -146,7 +150,7 @@ abstract class BaseCotisationQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `ID`, `PERSONNE_ID`, `DEBUT`, `FIN`, `CREATED_AT`, `UPDATED_AT` FROM `cotisation` WHERE `ID` = :p0';
+        $sql = 'SELECT `ID`, `PERSONNE_ID`, `DEBUT`, `FIN`, `MONTANT`, `CREATED_AT`, `UPDATED_AT` FROM `cotisation` WHERE `ID` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -389,6 +393,47 @@ abstract class BaseCotisationQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(CotisationPeer::FIN, $fin, $comparison);
+    }
+
+    /**
+     * Filter the query on the montant column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByMontant(1234); // WHERE montant = 1234
+     * $query->filterByMontant(array(12, 34)); // WHERE montant IN (12, 34)
+     * $query->filterByMontant(array('min' => 12)); // WHERE montant > 12
+     * </code>
+     *
+     * @param     mixed $montant The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return CotisationQuery The current query, for fluid interface
+     */
+    public function filterByMontant($montant = null, $comparison = null)
+    {
+        if (is_array($montant)) {
+            $useMinMax = false;
+            if (isset($montant['min'])) {
+                $this->addUsingAlias(CotisationPeer::MONTANT, $montant['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($montant['max'])) {
+                $this->addUsingAlias(CotisationPeer::MONTANT, $montant['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(CotisationPeer::MONTANT, $montant, $comparison);
     }
 
     /**

@@ -24,13 +24,13 @@ abstract class BaseCotisationPeer
     const TM_CLASS = 'CotisationTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 6;
+    const NUM_COLUMNS = 7;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 6;
+    const NUM_HYDRATE_COLUMNS = 7;
 
     /** the column name for the ID field */
     const ID = 'cotisation.ID';
@@ -43,6 +43,9 @@ abstract class BaseCotisationPeer
 
     /** the column name for the FIN field */
     const FIN = 'cotisation.FIN';
+
+    /** the column name for the MONTANT field */
+    const MONTANT = 'cotisation.MONTANT';
 
     /** the column name for the CREATED_AT field */
     const CREATED_AT = 'cotisation.CREATED_AT';
@@ -69,12 +72,12 @@ abstract class BaseCotisationPeer
      * e.g. CotisationPeer::$fieldNames[CotisationPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Id', 'PersonneId', 'Debut', 'Fin', 'CreatedAt', 'UpdatedAt', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'personneId', 'debut', 'fin', 'createdAt', 'updatedAt', ),
-        BasePeer::TYPE_COLNAME => array (CotisationPeer::ID, CotisationPeer::PERSONNE_ID, CotisationPeer::DEBUT, CotisationPeer::FIN, CotisationPeer::CREATED_AT, CotisationPeer::UPDATED_AT, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'PERSONNE_ID', 'DEBUT', 'FIN', 'CREATED_AT', 'UPDATED_AT', ),
-        BasePeer::TYPE_FIELDNAME => array ('id', 'personne_id', 'debut', 'fin', 'created_at', 'updated_at', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
+        BasePeer::TYPE_PHPNAME => array ('Id', 'PersonneId', 'Debut', 'Fin', 'Montant', 'CreatedAt', 'UpdatedAt', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'personneId', 'debut', 'fin', 'montant', 'createdAt', 'updatedAt', ),
+        BasePeer::TYPE_COLNAME => array (CotisationPeer::ID, CotisationPeer::PERSONNE_ID, CotisationPeer::DEBUT, CotisationPeer::FIN, CotisationPeer::MONTANT, CotisationPeer::CREATED_AT, CotisationPeer::UPDATED_AT, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'PERSONNE_ID', 'DEBUT', 'FIN', 'MONTANT', 'CREATED_AT', 'UPDATED_AT', ),
+        BasePeer::TYPE_FIELDNAME => array ('id', 'personne_id', 'debut', 'fin', 'montant', 'created_at', 'updated_at', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -84,12 +87,12 @@ abstract class BaseCotisationPeer
      * e.g. CotisationPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'PersonneId' => 1, 'Debut' => 2, 'Fin' => 3, 'CreatedAt' => 4, 'UpdatedAt' => 5, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'personneId' => 1, 'debut' => 2, 'fin' => 3, 'createdAt' => 4, 'updatedAt' => 5, ),
-        BasePeer::TYPE_COLNAME => array (CotisationPeer::ID => 0, CotisationPeer::PERSONNE_ID => 1, CotisationPeer::DEBUT => 2, CotisationPeer::FIN => 3, CotisationPeer::CREATED_AT => 4, CotisationPeer::UPDATED_AT => 5, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'PERSONNE_ID' => 1, 'DEBUT' => 2, 'FIN' => 3, 'CREATED_AT' => 4, 'UPDATED_AT' => 5, ),
-        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'personne_id' => 1, 'debut' => 2, 'fin' => 3, 'created_at' => 4, 'updated_at' => 5, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
+        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'PersonneId' => 1, 'Debut' => 2, 'Fin' => 3, 'Montant' => 4, 'CreatedAt' => 5, 'UpdatedAt' => 6, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'personneId' => 1, 'debut' => 2, 'fin' => 3, 'montant' => 4, 'createdAt' => 5, 'updatedAt' => 6, ),
+        BasePeer::TYPE_COLNAME => array (CotisationPeer::ID => 0, CotisationPeer::PERSONNE_ID => 1, CotisationPeer::DEBUT => 2, CotisationPeer::FIN => 3, CotisationPeer::MONTANT => 4, CotisationPeer::CREATED_AT => 5, CotisationPeer::UPDATED_AT => 6, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'PERSONNE_ID' => 1, 'DEBUT' => 2, 'FIN' => 3, 'MONTANT' => 4, 'CREATED_AT' => 5, 'UPDATED_AT' => 6, ),
+        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'personne_id' => 1, 'debut' => 2, 'fin' => 3, 'montant' => 4, 'created_at' => 5, 'updated_at' => 6, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -167,6 +170,7 @@ abstract class BaseCotisationPeer
             $criteria->addSelectColumn(CotisationPeer::PERSONNE_ID);
             $criteria->addSelectColumn(CotisationPeer::DEBUT);
             $criteria->addSelectColumn(CotisationPeer::FIN);
+            $criteria->addSelectColumn(CotisationPeer::MONTANT);
             $criteria->addSelectColumn(CotisationPeer::CREATED_AT);
             $criteria->addSelectColumn(CotisationPeer::UPDATED_AT);
         } else {
@@ -174,6 +178,7 @@ abstract class BaseCotisationPeer
             $criteria->addSelectColumn($alias . '.PERSONNE_ID');
             $criteria->addSelectColumn($alias . '.DEBUT');
             $criteria->addSelectColumn($alias . '.FIN');
+            $criteria->addSelectColumn($alias . '.MONTANT');
             $criteria->addSelectColumn($alias . '.CREATED_AT');
             $criteria->addSelectColumn($alias . '.UPDATED_AT');
         }
