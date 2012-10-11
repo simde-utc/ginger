@@ -35,7 +35,7 @@ class Personne extends BasePersonne
 		
 		if($personneData){
 			$this->setLogin($personneData->username);
-			$this->setPrenom(ucfirst(strtolower($personneData->firstName)));
+			$this->setPrenom(ucfirst(preg_replace("/(\s+|-)(\w)/e","'\\1' . strtoupper('\\2')",strtolower($personneData->firstName))));
 			$this->setNom(strtoupper($personneData->lastName));
 			$this->setMail($personneData->mail);
 			switch($personneData->profile){
