@@ -55,6 +55,23 @@ class Personne extends BasePersonne
 			$this->setBadgeUid($personneData->cardSerialNumber);
 			$this->setExpirationBadge($personneData->cardEndDate/1000);
 			$this->setIsAdulte($personneData->legalAge);
+			
+			// Si c'est un personnel, il est membre d'honneur
+			if($this->getType() == "pers" && !$this->isCotisant()){
+				// Calcul des dates de la cotisation
+				$debut = date("Y-m-d");
+				$yearend = date("Y");
+				if(date("m") > 8) $yearend++;
+				$fin = "$yearend-08-31";
+        
+				// création de la nouvelle cotisation
+				$cotisation = new Cotisation();
+				$cotisation->setDebut($debut);
+				$cotisation->setFin($fin);
+				$cotisation->setPersonne($this);
+				$cotisation->setMontant(0);
+				$cotisation->save();
+			}
 			return true;
 		}
 		return false;
