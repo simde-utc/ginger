@@ -1,6 +1,7 @@
 Entities\Cotisation:
     type: entity
     table: cotisation
+    actAs: { Timestampable: ~ }
     fields:
         id:
             id: true
@@ -18,14 +19,6 @@ Entities\Cotisation:
         montant:
             type: decimal
             nullable: false
-        createdAt:
-            type: datetime
-            nullable: true
-            column: created_at
-        updatedAt:
-            type: datetime
-            nullable: true
-            column: updated_at
     manyToOne:
         personne:
             targetEntity: Personne

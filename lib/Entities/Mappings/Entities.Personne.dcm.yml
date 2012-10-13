@@ -1,6 +1,7 @@
 Entities\Personne:
     type: entity
     table: personne
+    actAs: { Timestampable: ~ }
     fields:
         id:
             id: true
@@ -50,12 +51,4 @@ Entities\Personne:
             type: date
             nullable: true
             column: expiration_badge
-        createdAt:
-            type: datetime
-            nullable: true
-            column: created_at
-        updatedAt:
-            type: datetime
-            nullable: true
-            column: updated_at
     lifecycleCallbacks: {  }
