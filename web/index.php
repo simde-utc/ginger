@@ -2,6 +2,8 @@
 // Include all dependencies
 require '../vendor/autoload.php';
 
+require_once '../config.php';
+
 $app = new \Slim\Slim(array(
     'debug' => false,
     'templates.path' => '../templates'
@@ -9,13 +11,16 @@ $app = new \Slim\Slim(array(
 $app->contentType('application/json; charset=utf-8');
 
 require_once '../class/ginger.class.php';
+$Ginger = NULL;
 
 /***********************************************************************
  *                Check la presence de l'api key
  ***********************************************************************/
 $app->hook('slim.before.dispatch', function () use ($app) {
+	globql $Ginger;
 	if(empty($_GET['key']) and empty($_POST['key']))
 		throw new ApiException(401);
+	$Ginger = new Ginger(Config::accounts_url, $_POST['key']);
 });
 
 
@@ -45,32 +50,28 @@ $app->notFound(function () use ($app) {
  *                             Routes
  ***********************************************************************/
 // récupération d'un utilisateur
-$app->get('/v1/:login', function ($login) use ($app) {
-	$ginger = new Ginger($_GET['key']);
-	$r = $ginger->getPersonneDetails($login);
+$app->get('/v1/:login', function ($login) use ($app, $Ginger) {
+	$r = $Ginger->getPersonneDetails($login);
 	$app->render('success.json.php', array('result'=>$r));
 });
 
 // récupération des cotisations
-$app->get('/v1/:login/cotisations', function ($login) use ($app) {
-	$ginger = new Ginger($_GET['key']);
-	$r = $ginger->getPersonneCotisations($login);
+$app->get('/v1/:login/cotisations', function ($login) use ($app, $Ginger) {
+	$r = $Ginger->getPersonneCotisations($login);
 	$app->render('success.json.php', array('result'=>$r));
 });
 
 // recherche d'une personne
-$app->get('/v1/find/:loginpart', function ($loginpart) use ($app) {
-	$ginger = new Ginger($_GET['key']);
-	$r = $ginger->findPersonne($loginpart);
+$app->get('/v1/find/:loginpart', function ($loginpart) use ($app, $Ginger) {
+	$r = $Ginger->findPersonne($loginpart);
 	$app->render('success.json.php', array('result'=>$r));
 });
 
 // ajout d'une cotisation
-$app->post('/v1/:login/cotisations', function ($login) use ($app) {
-	$ginger = new Ginger($_POST['key']);
+$app->post('/v1/:login/cotisations', function ($login) use ($app, $Ginger) {
 	if (empty($_POST['debut']) or empty($_POST['fin']) or empty($_POST['montant']))
 		throw new ApiException(400);
-	$r = $ginger->addCotisation($login, strtotime($_POST['debut']), strtotime($_POST['fin']), $_POST['montant']);
+	$r = $Ginger->addCotisation($login, strtotime($_POST['debut']), strtotime($_POST['fin']), $_POST['montant']);
 	$app->render('success.json.php', array('result'=>$r));
 });
 

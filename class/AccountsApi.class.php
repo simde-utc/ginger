@@ -1,12 +1,11 @@
 <?php
-require_once '../config.php';
 
 class AccountsApi {
 	private static $useragent = "ginger/0.1";
 	
-	private static function apiCall($endpoint, $params = array()){
+	private static function apiCall($accounts_url, $endpoint, $params = array()){
 		// Construction de l'url avec l'endpoint et les paramètres
-		$url = Config::$ACCOUNTS_URL.$endpoint;
+		$url = $accounts_url.$endpoint;
 		if(!empty($params)){
 			$url .= "?";
 			foreach($params as $key => $param){

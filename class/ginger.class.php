@@ -3,9 +3,9 @@ require_once 'ApiException.class.php';
 require_once 'AccountsApi.class.php';
 
 class Ginger {
-	protected $auth;
+	protected $auth, $accounts_url;
 	
-	public function __construct($key) {
+	public function __construct($accounts_url, $key) {
 		// vérification que la clef est en argument
 		if (empty($key))
 			throw new ApiException(401);
@@ -14,6 +14,9 @@ class Ginger {
 		$this->auth = AuthkeyQuery::create()->findOneByCle($key);
 		if(!$this->auth)
 			throw new ApiException(403);
+
+
+		$this->accounts_url = $accounts_url;
 	}
 
 	public function getPersonneDetails($login) {
@@ -39,7 +42,7 @@ class Ginger {
 			}
 
 			// Si l'update a réussi, on garde l'objet
-			if($newpersonne->updateFromAccounts()){
+			if($newpersonne->updateFromAccounts($this->accounts_url)){
 				$personne = $newpersonne;
 				$personne->save();
 			}
