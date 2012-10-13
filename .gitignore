@@ -13,3 +13,6 @@ ehthumbs.db
 Thumbs.db
 /build/conf/ginger-conf.php
 /config.php
+
+
+phpunit.xml

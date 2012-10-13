@@ -1,0 +1,27 @@
+personne:
+  -
+    id: 1
+    login: trecouvr
+    prenom: Thomas
+    nom: Recouvreux
+    mail: thomas.recouvreux@etu.utc.fr
+    type: etu
+    date_naissance: 1991-08-16
+    is_adulte: 1
+    badge_uid: ABCDEF1234
+    expiration_badge: 2013-07-01
+    created_at: 2012-10-01
+    updated_at: 2012-10-01
+
+authkey:
+  -
+    id: 1
+    asso: simde
+    details: coucou ca va ?
+    cle: abc
+    droit_ecriture: 1
+    droit_badges: 1
+    droit_cotisations: 1
+    created_at: 2012-10-01
+    updated_at: 2012-10-01
+  
