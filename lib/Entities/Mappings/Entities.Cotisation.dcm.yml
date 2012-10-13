@@ -9,7 +9,7 @@ Entities\Cotisation:
             unsigned: false
             nullable: false
             generator:
-                strategy: IDENTITY
+                strategy: AUTO
         debut:
             type: date
             nullable: false

@@ -9,7 +9,7 @@ Entities\Authkey:
             unsigned: false
             nullable: false
             generator:
-                strategy: IDENTITY
+                strategy: AUTO
         asso:
             type: string
             length: 200

@@ -9,7 +9,7 @@ Entities\Personne:
             unsigned: false
             nullable: false
             generator:
-                strategy: IDENTITY
+                strategy: AUTO
         login:
             type: string
             length: 8
