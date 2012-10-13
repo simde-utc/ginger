@@ -248,4 +248,15 @@ class Authkey
     {
         return $this->updatedAt;
     }
+    /**
+     * @var \DateTime $created_at
+     */
+    private $created_at;
+
+    /**
+     * @var \DateTime $updated_at
+     */
+    private $updated_at;
+
+
 }

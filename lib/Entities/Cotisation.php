@@ -192,4 +192,15 @@ class Cotisation
     {
         return $this->personne;
     }
+    /**
+     * @var \DateTime $created_at
+     */
+    private $created_at;
+
+    /**
+     * @var \DateTime $updated_at
+     */
+    private $updated_at;
+
+
 }
