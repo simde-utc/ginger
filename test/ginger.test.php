@@ -1,6 +1,7 @@
 <?php
 
 require_once 'vendor/autoload.php';
+require_once 'bootstrap.php';
 require_once 'class/ginger.class.php';
 
 class TruncateOperation extends \PHPUnit_Extensions_Database_Operation_Truncate
@@ -27,8 +28,8 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 	
 	public function getConnection()
 	{
-		$pdo = new PDO($GLOBALS['DB_DSN'], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWD']);
-		return $this->createDefaultDBConnection($pdo, $GLOBALS['DB_DBNAME']);
+		$pdo = new PDO('mysql:dbname='.Config::$SQL_DB.';host='.Config::$SQL_HOST, Config::$SQL_USER, Config::$SQL_PASSWORD);
+		return $this->createDefaultDBConnection($pdo);
 	}
 
 	public function getDataSet()
