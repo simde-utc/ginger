@@ -150,7 +150,7 @@ class Authkey extends \Entities\Authkey implements \Doctrine\ORM\Proxy\Proxy
 
     public function __sleep()
     {
-        return array('__isInitialized__', 'id', 'asso', 'details', 'cle', 'droitEcriture', 'droitBadges', 'droitCotisations', 'createdAt', 'updatedAt');
+        return array('__isInitialized__', 'id', 'asso', 'details', 'cle', 'droitEcriture', 'droitBadges', 'droitCotisations');
     }
 
     public function __clone()
