@@ -14,6 +14,10 @@ Pour récupérer propel, faire à la racine :
     git submodule init
     git submodule update
 
+Pour installer doctrine :
+    curl -s http://getcomposer.org/installer | php
+    php composer.phar install
+
 Pour faire fonctionner le script `propel-gen`, il faut installer phing :
 
     pear channel-discover pear.phing.info

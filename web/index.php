@@ -1,11 +1,6 @@
 <?php
-// Include the main Propel script, initialize it and add classes to inc path
-require_once '../lib/propel/runtime/lib/Propel.php';
-Propel::init("../build/conf/ginger-conf.php");
-set_include_path("../build/classes" . PATH_SEPARATOR . get_include_path());
-
-require_once '../lib/Slim/Slim.php';
-\Slim\Slim::registerAutoloader();
+// Include all dependencies
+require '../vendor/autoload.php';
 
 $app = new \Slim\Slim(array(
     'debug' => false,
