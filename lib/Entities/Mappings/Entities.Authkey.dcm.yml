@@ -1,0 +1,47 @@
+Entities\Authkey:
+    type: entity
+    table: authkey
+    fields:
+        id:
+            id: true
+            type: integer
+            unsigned: false
+            nullable: false
+            generator:
+                strategy: IDENTITY
+        asso:
+            type: string
+            length: 200
+            fixed: false
+            nullable: false
+        details:
+            type: string
+            length: 1000
+            fixed: false
+            nullable: false
+        cle:
+            type: string
+            length: 50
+            fixed: false
+            nullable: false
+        droitEcriture:
+            type: boolean
+            nullable: false
+            column: droit_ecriture
+        droitBadges:
+            type: boolean
+            nullable: false
+            column: droit_badges
+        droitCotisations:
+            type: boolean
+            nullable: false
+            column: droit_cotisations
+        createdAt:
+            type: datetime
+            nullable: true
+            column: created_at
+        updatedAt:
+            type: datetime
+            nullable: true
+            column: updated_at
+    lifecycleCallbacks: {  }

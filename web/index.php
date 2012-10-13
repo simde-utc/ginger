@@ -1,6 +1,9 @@
 <?php
 // Include all dependencies
-require '../vendor/autoload.php';
+require_once '../vendor/autoload.php';
+
+// Include doctrine config
+require_once '../bootstrap.php';
 
 require_once '../config.php';
 

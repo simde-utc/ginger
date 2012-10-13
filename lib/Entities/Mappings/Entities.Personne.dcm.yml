@@ -1,0 +1,61 @@
+Entities\Personne:
+    type: entity
+    table: personne
+    fields:
+        id:
+            id: true
+            type: integer
+            unsigned: false
+            nullable: false
+            generator:
+                strategy: IDENTITY
+        login:
+            type: string
+            length: 8
+            fixed: false
+            nullable: false
+        prenom:
+            type: string
+            length: 128
+            fixed: false
+            nullable: false
+        nom:
+            type: string
+            length: 128
+            fixed: false
+            nullable: false
+        mail:
+            type: string
+            length: 200
+            fixed: false
+            nullable: false
+        type:
+            type: boolean
+            nullable: false
+        dateNaissance:
+            type: date
+            nullable: true
+            column: date_naissance
+        isAdulte:
+            type: boolean
+            nullable: false
+            column: is_adulte
+        badgeUid:
+            type: string
+            length: 10
+            fixed: false
+            nullable: true
+            column: badge_uid
+        expirationBadge:
+            type: date
+            nullable: true
+            column: expiration_badge
+        createdAt:
+            type: datetime
+            nullable: true
+            column: created_at
+        updatedAt:
+            type: datetime
+            nullable: true
+            column: updated_at
+    lifecycleCallbacks: {  }
