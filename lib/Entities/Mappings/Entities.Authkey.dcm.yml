@@ -37,4 +37,14 @@ Entities\Authkey:
             type: boolean
             nullable: false
             column: droit_cotisations
+        created_at:
+            type: date
+            gedmo:
+                timestampable:
+                    on: create
+        updated_at:
+          type: datetime
+          gedmo:
+            timestampable:
+                on: update
     lifecycleCallbacks: {  }

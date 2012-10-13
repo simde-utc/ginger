@@ -51,4 +51,14 @@ Entities\Personne:
             type: date
             nullable: true
             column: expiration_badge
+        created_at:
+            type: date
+            gedmo:
+                timestampable:
+                    on: create
+        updated_at:
+          type: datetime
+          gedmo:
+            timestampable:
+                on: update
     lifecycleCallbacks: {  }

@@ -186,7 +186,11 @@ class Personne extends \Entities\Personne implements \Doctrine\ORM\Proxy\Proxy
 
     public function __sleep()
     {
-        return array('__isInitialized__', 'id', 'login', 'prenom', 'nom', 'mail', 'type', 'dateNaissance', 'isAdulte', 'badgeUid', 'expirationBadge', 'createdAt', 'updatedAt');
+<<<<<<< HEAD
+        return array('__isInitialized__', 'id', 'login', 'prenom', 'nom', 'mail', 'type', 'dateNaissance', 'isAdulte', 'badgeUid', 'expirationBadge', 'created_at', 'updated_at');
+=======
+        return array('__isInitialized__', 'id', 'login', 'prenom', 'nom', 'mail', 'type', 'dateNaissance', 'isAdulte', 'badgeUid', 'expirationBadge');
+>>>>>>> aaca4e16dd970ea00090939d0522c4336b31535a
     }
 
     public function __clone()

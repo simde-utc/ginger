@@ -19,6 +19,16 @@ Entities\Cotisation:
         montant:
             type: decimal
             nullable: false
+        created_at:
+            type: date
+            gedmo:
+                timestampable:
+                    on: create
+        updated_at:
+          type: datetime
+          gedmo:
+            timestampable:
+                on: update
     manyToOne:
         personne:
             targetEntity: Personne

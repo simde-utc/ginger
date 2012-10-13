@@ -126,7 +126,11 @@ class Cotisation extends \Entities\Cotisation implements \Doctrine\ORM\Proxy\Pro
 
     public function __sleep()
     {
-        return array('__isInitialized__', 'id', 'debut', 'fin', 'montant', 'createdAt', 'updatedAt', 'personne');
+<<<<<<< HEAD
+        return array('__isInitialized__', 'id', 'debut', 'fin', 'montant', 'created_at', 'updated_at', 'personne');
+=======
+        return array('__isInitialized__', 'id', 'debut', 'fin', 'montant', 'personne');
+>>>>>>> aaca4e16dd970ea00090939d0522c4336b31535a
     }
 
     public function __clone()
