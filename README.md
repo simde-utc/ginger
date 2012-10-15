@@ -9,7 +9,7 @@ La structure de la base est dans `build/conf/schema.sql` (ou utiliser `./propel-
 
 Pour installer doctrine et sa dépendance :
 
-    curl -s http://getcomposer.org/installer | php
+    curl -s https://getcomposer.org/installer | php
     php composer.phar install
 
 Pour reconstruire les classes à partir du modèle :
