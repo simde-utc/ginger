@@ -1,5 +1,7 @@
 <?php
-require_once 'ApiException.class.php';
+require_once 'Koala.class.php';
+use \Koala\ApiException;
+
 require_once 'AccountsApi.class.php';
 
 class Ginger {
