@@ -43,6 +43,7 @@
  * @method Personne findOne(PropelPDO $con = null) Return the first Personne matching the query
  * @method Personne findOneOrCreate(PropelPDO $con = null) Return the first Personne matching the query, or a new Personne object populated from the query conditions when no match is found
  *
+ * @method Personne findOneById(int $id) Return the first Personne filtered by the id column
  * @method Personne findOneByLogin(string $login) Return the first Personne filtered by the login column
  * @method Personne findOneByPrenom(string $prenom) Return the first Personne filtered by the prenom column
  * @method Personne findOneByNom(string $nom) Return the first Personne filtered by the nom column
@@ -143,20 +144,6 @@ abstract class BasePersonneQuery extends ModelCriteria
             return $this->findPkSimple($key, $con);
         }
     }
-
-    /**
-     * Alias of findPk to use instance pooling
-     *
-     * @param     mixed $key Primary key to use for the query
-     * @param     PropelPDO $con A connection object
-     *
-     * @return   Personne A model object, or null if the key is not found
-     * @throws   PropelException
-     */
-     public function findOneById($key, $con = null)
-     {
-        return $this->findPk($key, $con);
-     }
 
     /**
      * Find object by primary key using raw SQL to go fast.

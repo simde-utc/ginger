@@ -1700,7 +1700,7 @@ abstract class BasePersonne extends BaseObject implements Persistent
             $this->initCotisations();
             $this->collCotisationsPartial = true;
         }
-        if (!in_array($l, $this->collCotisations->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+        if (!$this->collCotisations->contains($l)) { // only add it if the **same** object is not already associated
             $this->doAddCotisation($l);
         }
 

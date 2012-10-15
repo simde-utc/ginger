@@ -33,6 +33,7 @@
  * @method Authkey findOne(PropelPDO $con = null) Return the first Authkey matching the query
  * @method Authkey findOneOrCreate(PropelPDO $con = null) Return the first Authkey matching the query, or a new Authkey object populated from the query conditions when no match is found
  *
+ * @method Authkey findOneById(int $id) Return the first Authkey filtered by the id column
  * @method Authkey findOneByAsso(string $asso) Return the first Authkey filtered by the asso column
  * @method Authkey findOneByDetails(string $details) Return the first Authkey filtered by the details column
  * @method Authkey findOneByCle(string $cle) Return the first Authkey filtered by the cle column
@@ -127,20 +128,6 @@ abstract class BaseAuthkeyQuery extends ModelCriteria
             return $this->findPkSimple($key, $con);
         }
     }
-
-    /**
-     * Alias of findPk to use instance pooling
-     *
-     * @param     mixed $key Primary key to use for the query
-     * @param     PropelPDO $con A connection object
-     *
-     * @return   Authkey A model object, or null if the key is not found
-     * @throws   PropelException
-     */
-     public function findOneById($key, $con = null)
-     {
-        return $this->findPk($key, $con);
-     }
 
     /**
      * Find object by primary key using raw SQL to go fast.

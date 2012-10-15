@@ -33,6 +33,7 @@
  * @method Cotisation findOne(PropelPDO $con = null) Return the first Cotisation matching the query
  * @method Cotisation findOneOrCreate(PropelPDO $con = null) Return the first Cotisation matching the query, or a new Cotisation object populated from the query conditions when no match is found
  *
+ * @method Cotisation findOneById(int $id) Return the first Cotisation filtered by the id column
  * @method Cotisation findOneByPersonneId(int $personne_id) Return the first Cotisation filtered by the personne_id column
  * @method Cotisation findOneByDebut(string $debut) Return the first Cotisation filtered by the debut column
  * @method Cotisation findOneByFin(string $fin) Return the first Cotisation filtered by the fin column
@@ -123,20 +124,6 @@ abstract class BaseCotisationQuery extends ModelCriteria
             return $this->findPkSimple($key, $con);
         }
     }
-
-    /**
-     * Alias of findPk to use instance pooling
-     *
-     * @param     mixed $key Primary key to use for the query
-     * @param     PropelPDO $con A connection object
-     *
-     * @return   Cotisation A model object, or null if the key is not found
-     * @throws   PropelException
-     */
-     public function findOneById($key, $con = null)
-     {
-        return $this->findPk($key, $con);
-     }
 
     /**
      * Find object by primary key using raw SQL to go fast.
