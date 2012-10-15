@@ -60,7 +60,7 @@ $app->get('/v1/find/:loginpart', function ($loginpart) use ($app, $myAuth) {
 // ajout d'une cotisation
 $app->post('/v1/:login/cotisations', function ($login) use ($app, $myAuth) {
 	if (empty($_POST['debut']) or empty($_POST['fin']) or empty($_POST['montant']))
-		throw new ApiException(400);
+		throw new \Koala\ApiException(400);
 	
 	$r = $myAuth->ginger->addCotisation($login, strtotime($_POST['debut']), strtotime($_POST['fin']), $_POST['montant']);
 	$app->render('success.json.php', array('result'=>$r));
