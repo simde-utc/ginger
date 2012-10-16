@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
-  <!-- Uncomment this if you have PEAR Log installed
-  <log>
-    <type>file</type>
-    <name>/path/to/propel.log</name>
-    <ident>propel-bookstore</ident>
-    <level>7</level>
-  </log>
-  -->
   <propel>
     <datasources default="ginger">
       <datasource id="ginger">
