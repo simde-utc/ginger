@@ -18,4 +18,5 @@ Thumbs.db
 /config.php
 /build.properties
 /buildtime-conf.xml
+/build/conf/ginger-conf.php
 phpunit.xml
