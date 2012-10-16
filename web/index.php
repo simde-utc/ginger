@@ -9,13 +9,6 @@ set_include_path("../build/classes" . PATH_SEPARATOR . get_include_path());
 // Include config
 require_once '../config.php';
 
-// Replace propel db config from config file
-$propelconfig = Propel::getConfiguration(PropelConfiguration::TYPE_OBJECT);
-$propelconfig->setParameter("datasources.ginger.connection.dsn", "mysql:host=".Config::$SQL_HOST.";dbname=".Config::$SQL_DB); 
-$propelconfig->setParameter("datasources.ginger.connection.username", Config::$SQL_USER); 
-$propelconfig->setParameter("datasources.ginger.connection.password", Config::$SQL_PASSWORD); 
-
-
 require_once '../class/Koala.class.php';
 require_once '../class/ginger.class.php';
 

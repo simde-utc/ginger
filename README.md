@@ -3,22 +3,35 @@ ginger
 
 Outil de gestion des cotisants
 
-Toute la configuration se fait dans `config.php`. Il faut copier le fichier `config.dist.php` en `config.php` et modifier les paramètres.
+Installation
+------------
 
-La structure de la base est dans `build/conf/schema.sql` (ou utiliser `./propel-gen insert-sql` - mais attention cela efface toutes les données !).
-
-Pour installer doctrine et sa dépendance :
+Installer doctrine et sa dépendance :
 
     curl -s https://getcomposer.org/installer | php
     php composer.phar install
 
-Pour reconstruire les classes à partir du modèle :
+Modifier la configuration Mysql (copier les fichiers du git en retirant le .dist) :
+* `buildtime-conf.xml`
+* `build.properties`
+
+Ajouter l'URL vers Accounts :
+* `config.php`
+
+Reconstruire les classes et la config :
 
     ./propel-gen
 
 Si cela donne un problème de permission, faire :
 
     chmod +x vendor/propel/propel1/generator/bin/phing.php
+
+Remplir les tables (ATTENTION cela efface toutes les données) :
+
+    ./propel-gen insert-sql
+
+Migrations
+----------
 
 Après un changement du schéma dans `schema.xml`, pour générer une migration :
  

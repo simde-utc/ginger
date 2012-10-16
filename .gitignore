@@ -12,8 +12,10 @@ vendor/
 *._*
 ehthumbs.db
 Thumbs.db
-/build/conf/ginger-conf.php
+
+
+
 /config.php
-
-
+/build.properties
+/buildtime-conf.xml
 phpunit.xml
