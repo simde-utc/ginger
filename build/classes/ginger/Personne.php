@@ -25,12 +25,12 @@ class Personne extends BasePersonne
 		return !$this->getCotisations($crit)->isEmpty();
 	}
 	
-	public function updateFromAccounts(){
+	public function updateFromAccounts($accounts){
 		if($this->getLogin()){
-			$personneData = AccountsApi::getUserInfo($this->getLogin());
+			$personneData = $accounts->getUserInfo($this->getLogin());
 		}
 		if(!$personneData && $this->getBadgeUid()){
-			$personneData = AccountsApi::cardLookup($this->getBadgeUid());
+			$personneData = $accounts->cardLookup($this->getBadgeUid());
 		}
 		
 		if($personneData){

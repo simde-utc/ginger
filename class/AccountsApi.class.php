@@ -1,11 +1,16 @@
 <?php
 
 class AccountsApi {
-	private static $useragent = "ginger/0.1";
+	private $useragent = "ginger/0.1";
+    private $accounts_url;
 	
-	private static function apiCall($accounts_url, $endpoint, $params = array()){
+    public function __construct($url){
+        $this->accounts_url = $url;
+    }
+
+	private function apiCall($endpoint, $params = array()){
 		// Construction de l'url avec l'endpoint et les paramètres
-		$url = $accounts_url.$endpoint;
+		$url = $this->accounts_url.$endpoint;
 		if(!empty($params)){
 			$url .= "?";
 			foreach($params as $key => $param){
@@ -18,7 +23,7 @@ class AccountsApi {
 		// Initialisation de cURL
 		$ch = curl_init($url);
 		curl_setopt_array($ch, array(
-				CURLOPT_USERAGENT => AccountsApi::$useragent,
+				CURLOPT_USERAGENT => $this->useragent,
 				CURLOPT_RETURNTRANSFER => true
 		));
 		
@@ -43,14 +48,14 @@ class AccountsApi {
 		$params = array(
 				"username" => $username
 		);
-		return AccountsApi::apiCall("getUserInfo", $params);
+		return $this->apiCall("getUserInfo", $params);
 	}
 	
 	public static function cardLookup($uid){
 		$params = array(
 				"serialNumber" => $uid
 		);
-		return AccountsApi::apiCall("cardLookup", $params);
+		return $this->apiCall("cardLookup", $params);
 	}
 }
 

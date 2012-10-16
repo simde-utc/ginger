@@ -5,7 +5,7 @@ use \Koala\ApiException;
 require_once 'AccountsApi.class.php';
 
 class Ginger {
-	protected $auth, $accounts_url;
+	protected $auth, $accounts;
 	
 	public function __construct($accounts_url, $key) {
 		// vérification que la clef est en argument
@@ -17,8 +17,8 @@ class Ginger {
 		if(!$this->auth)
 			throw new ApiException(403);
 
-
-		$this->accounts_url = $accounts_url;
+        // Initialisation de Accounts
+		$this->accounts = new AccountsApi(Config::$ACCOUNTS_URL);
 	}
 
 	public function getPersonneDetails($login) {
@@ -44,7 +44,7 @@ class Ginger {
 			}
 
 			// Si l'update a réussi, on garde l'objet
-			if($newpersonne->updateFromAccounts($this->accounts_url)){
+			if($newpersonne->updateFromAccounts($accounts)){
 				$personne = $newpersonne;
 				$personne->save();
 			}
@@ -58,7 +58,7 @@ class Ginger {
 		// - il est mineur
 		// - on n'a pas son mail (import depuis le fichier des cotisants)
 		if(!$personne->getIsAdulte() || !$personne->getMail()){
-			$personne->updateFromAccounts();
+			$personne->updateFromAccounts($accounts);
 		}
 
 		// création de l'array du retour
