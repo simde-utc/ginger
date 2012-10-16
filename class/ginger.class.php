@@ -44,7 +44,7 @@ class Ginger {
 			}
 
 			// Si l'update a réussi, on garde l'objet
-			if($newpersonne->updateFromAccounts($accounts)){
+			if($newpersonne->updateFromAccounts($this->accounts)){
 				$personne = $newpersonne;
 				$personne->save();
 			}
@@ -58,7 +58,7 @@ class Ginger {
 		// - il est mineur
 		// - on n'a pas son mail (import depuis le fichier des cotisants)
 		if(!$personne->getIsAdulte() || !$personne->getMail()){
-			$personne->updateFromAccounts($accounts);
+			$personne->updateFromAccounts($this->accounts);
 		}
 
 		// création de l'array du retour
