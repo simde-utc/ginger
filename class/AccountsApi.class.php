@@ -44,14 +44,14 @@ class AccountsApi {
 		}
 	}
 	
-	public static function getUserInfo($username){
+	public function getUserInfo($username){
 		$params = array(
 				"username" => $username
 		);
 		return $this->apiCall("getUserInfo", $params);
 	}
 	
-	public static function cardLookup($uid){
+	public function cardLookup($uid){
 		$params = array(
 				"serialNumber" => $uid
 		);
