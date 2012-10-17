@@ -100,6 +100,7 @@ class Ginger {
 			$r[] = array(
 				"debut" => $cotisation->getDebut(),
 				"fin" => $cotisation->getFin(),		
+				"montant" => $cotisation->getMontant(),
 			);
 		}
 		return $r;
