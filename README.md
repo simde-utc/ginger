@@ -6,7 +6,7 @@ Outil de gestion des cotisants
 Installation
 ------------
 
-Installer doctrine et sa dépendance :
+Installer propel et sa dépendance :
 
     curl -s https://getcomposer.org/installer | php
     php composer.phar install
