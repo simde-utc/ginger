@@ -48,14 +48,31 @@ class AccountsApi {
 		$params = array(
 				"username" => $username
 		);
-		return $this->apiCall("getUserInfo", $params);
+		$result = $this->apiCall("getUserInfo", $params);
+		
+		if(!empty($result->cardSerialNumber)){
+			$result->cardSerialNumber = $this->swapUid($result->cardSerialNumber);
+		}
+			
+		return $result;
 	}
 	
 	public function cardLookup($uid){
 		$params = array(
-				"serialNumber" => $uid
+				"serialNumber" => $this->swapUid($uid)
 		);
-		return $this->apiCall("cardLookup", $params);
+		
+		$result = $this->apiCall("cardLookup", $params);
+		
+		if(!empty($result->cardSerialNumber)){
+			$result->cardSerialNumber = $this->swapUid($result->cardSerialNumber);
+		}
+		
+		return $result;
+	}
+	
+	private function swapUid($in){
+		return $in[6].$in[7].$in[4].$in[5].$in[2].$in[3].$in[0].$in[1];
 	}
 }
 
