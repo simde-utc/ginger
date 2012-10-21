@@ -29,9 +29,6 @@ class Personne extends BasePersonne
 		if($this->getLogin()){
 			$personneData = $accounts->getUserInfo($this->getLogin());
 		}
-		if(!$personneData && $this->getBadgeUid()){
-			$personneData = $accounts->cardLookup($this->getBadgeUid());
-		}
 		
 		if($personneData){
 			$this->setLogin($personneData->username);
@@ -55,6 +52,7 @@ class Personne extends BasePersonne
 			$this->setBadgeUid($personneData->cardSerialNumber);
 			$this->setExpirationBadge($personneData->cardEndDate/1000);
 			$this->setIsAdulte($personneData->legalAge);
+			$this->save();
 			
 			// Si c'est un personnel, il est membre d'honneur
 			if($this->getType() == "pers" && !$this->isCotisant()){
@@ -72,6 +70,7 @@ class Personne extends BasePersonne
 				$cotisation->setMontant(0);
 				$cotisation->save();
 			}
+			
 			return true;
 		}
 		return false;

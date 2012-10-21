@@ -28,30 +28,29 @@ class Ginger {
 						->_if($this->auth->getDroitBadges())
 						->orWhere("p.badgeUid = ?", $login)
 						->_endif()
-						->findOne();
+						->findOneOrCreate();
 		
 		// Si l'utilisateur est introuvable, on essaie de le récupérer à la DSI
-		if(!$personne){
-			// On créé un nouvel objet
-			$newpersonne = new Personne();
+		if($personne->isNew()){
+			// On cherche à mettre à jour en utilisant le login
+			$personne->updateFromAccounts($this->accounts);
 			
-			// On essaie de set le login
-			$newpersonne->setLogin($login);
-			
-			// Si l'utilisateur a le droit, on essaie de set le badge aussi
-			if($this->auth->getDroitBadges()){
-				$newpersonne->setBadgeUid($login);
-			}
-
-			// Si l'update a réussi, on garde l'objet
-			if($newpersonne->updateFromAccounts($this->accounts)){
-				$personne = $newpersonne;
-				$personne->save();
+			// Si l'utilisateur est toujours introuvable et qu'on a les droits, on recherche le badge
+			if($personne->isNew() && $this->auth->getDroitBadges()){
+				$personneData = $this->accounts->cardLookup($login);
+				
+				if($personneData->username){
+					$personne = PersonneQuery::create()
+									->filterByLogin($personneData->username)
+									->findOneOrCreate();
+					$personne->setBadgeUid($personneData->cardSerialNumber);
+					$personne->save();
+				}
 			}
 		}
 		
 		// S'il est toujours introuvable, on renvoie une erreur
-		if(!$personne)
+		if($personne->isNew())
 			throw new ApiException(404);
 		
 		// On a la personne, bien. On met quand même à jour si :
