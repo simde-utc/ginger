@@ -23,8 +23,10 @@
     <column name="badge_uid" type="varchar" size="10" required="false"/>
     <column name="expiration_badge" type="date" required="false"/>
     <behavior name="timestampable" />
+		<unique>
+			<unique-column name="login"/>
+		</unique>
     <unique>
-      <unique-column name="login"/>
       <unique-column name="badge_uid"/>
     </unique>
   </table>
