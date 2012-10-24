@@ -1,15 +1,15 @@
 <?php
 
-require_once 'vendor/autoload.php';
+require_once '../vendor/autoload.php';
 
 // Include model
-Propel::init("build/conf/ginger-conf.php");
-set_include_path("build/classes" . PATH_SEPARATOR . get_include_path());
+Propel::init("../build/conf/ginger-conf.php");
+set_include_path("../build/classes" . PATH_SEPARATOR . get_include_path());
 
-require_once 'config.php';
-require_once 'class/ginger.class.php';
-require_once 'class/Koala.class.php';
-
+require_once '../config.php';
+require_once '../class/ginger.class.php';
+require_once '../class/Koala.class.php';
+require_once 'ginger-client/KoalaClient.class.php';
 
 class TruncateOperation extends \PHPUnit_Extensions_Database_Operation_Truncate
 {
@@ -21,8 +21,27 @@ class TruncateOperation extends \PHPUnit_Extensions_Database_Operation_Truncate
 	}
 }
 
+class BasicClient extends KoalaClient {
+	public function apiCall($endpoint, $params, $method) {
+		return parent::apiCall($GLOBALS['GINGER_URL'].$endpoint, $params, $method);
+	}
+}
+
 class GingerTest extends PHPUnit_Extensions_Database_TestCase
 {
+	protected $TRECOUVR_EXPECTED_DETAILS = array(
+				"login" => 'trecouvr',
+				"nom" => 'Recouvreux',
+				"prenom" => 'Thomas',
+				"mail" => 'thomas.recouvreux@etu.utc.fr',
+				"type" => 'etu',
+				"is_adulte" => true,
+				"is_cotisant" => false,
+				"badge_uid" => 'ABCDEF1234',
+				"expiration_badge" => NULL // todo, les fixtures phpunits marchent pas
+		);
+	protected $client=NULL;
+	
 	public function getSetUpOperation()
 	{
 		$cascadeTruncates = false; // True if you want cascading truncates, false otherwise. If unsure choose false.
@@ -44,58 +63,62 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 		return new PHPUnit_Extensions_Database_DataSet_YamlDataSet(dirname(__FILE__).'/ginger-seed.yml');
 	}
 
-	public function testInit() {
-		new Ginger('', 'abc');
+	public function setUp() {
+		if (!$this->client)
+			$this->client = new BasicClient();
+	}
+
+	protected function _testCurl($endPoint, $params, $method, $expected) {
+		$expected = json_decode(json_encode($expected));
+		$r = $this->client->apiCall($endPoint, $params, $method);
+		$this->assertEquals($expected, $r);
 	}
 
 	/**
-	 * @depends testInit
-	 * @expectedException		 \Koala\ApiException
+	 * @expectedException		 ApiException
 	 * @expectedExceptionCode	 403
 	 */
 	public function testApiKeyInvalid() {
-		new Ginger('', 'existepas');
+		$this->client->apiCall('/v1/trecouvr', array('key'=>'existepas'), 'GET');
 	}
 
 	/**
-	 * @depends testInit
-	 * @expectedException		 \Koala\ApiException
+	 * @expectedException		 ApiException
 	 * @expectedExceptionCode	 401
 	 */
 	public function testApiKeyNull() {
-		new Ginger('', NULL);
+		$this->client->apiCall('/v1/trecouvr', array(), 'GET');
 	}
 
 	/**
-	 * @depends testInit
-	 * @expectedException		 \Koala\ApiException
+	 * @expectedException		 ApiException
 	 * @expectedExceptionCode	 401
 	 */
 	public function testApiKeyEmptyString() {
-		new Ginger('', '');
+		$this->client->apiCall('/v1/trecouvr', array('key'=>''), 'GET');
 	}
 
 	/**
-	 * @depends testInit
+	 * @requires function curl_init
 	 */
 	public function testGetPersonneDetails()
 	{
-		$ginger = new Ginger('http://localhost/accounts/', 'abc');
-		$details = $ginger->getPersonneDetails('trecouvr');
-		$expected_details = array(
-				"login" => 'trecouvr',
-				"nom" => 'Recouvreux',
-				"prenom" => 'Thomas',
-				"mail" => 'thomas.recouvreux@etu.utc.fr',
-				"type" => 'etu',
-				"is_adulte" => true,
-				"is_cotisant" => false,
-				"badge_uid" => 'ABCDEF1234',
-				"expiration_badge" => null
-		);
-		$this->assertEquals($expected_details, $details);
+		$this->_testCurl('/v1/trecouvr', array('key'=>'abc'), 'GET', $this->TRECOUVR_EXPECTED_DETAILS);
 	}
 
+	/**
+	 * @requires function curl_init
+	 */
+	public function testlFindPersonne()
+	{
+		$this->_testCurl('/v1/find/trec', array('key'=>'abc'), 'GET', array(
+			array(
+				'login'=>$this->TRECOUVR_EXPECTED_DETAILS['login'],
+				'nom'=>$this->TRECOUVR_EXPECTED_DETAILS['nom'],
+				'prenom'=>$this->TRECOUVR_EXPECTED_DETAILS['prenom'],
+			)
+		));
+	}
 }
 
 ?>
