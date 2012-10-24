@@ -1,8 +1,15 @@
 <?php
 
 require_once 'vendor/autoload.php';
-require_once 'bootstrap.php';
+
+// Include model
+Propel::init("build/conf/ginger-conf.php");
+set_include_path("build/classes" . PATH_SEPARATOR . get_include_path());
+
+require_once 'config.php';
 require_once 'class/ginger.class.php';
+require_once 'class/Koala.class.php';
+
 
 class TruncateOperation extends \PHPUnit_Extensions_Database_Operation_Truncate
 {
@@ -38,55 +45,55 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 	}
 
 	public function testInit() {
-		new Ginger('http://localhost/accounts/', 'abc');
+		new Ginger('', 'abc');
 	}
 
-	/*
+	/**
 	 * @depends testInit
-	 * @expectedException		 ApiException
+	 * @expectedException		 \Koala\ApiException
 	 * @expectedExceptionCode	 403
 	 */
 	public function testApiKeyInvalid() {
-		new Ginger('http://localhost/accounts/', 'existepas');
-	}
-
-	/*
-	 * @depends testInit
-	 * @expectedException		 ApiException
-	 * @expectedExceptionCode	 401
-	 */
-	public function testApiKeyNull() {
-		new Ginger(NULL, 'existepas');
-	}
-
-	/*
-	 * @depends testInit
-	 * @expectedException		 ApiException
-	 * @expectedExceptionCode	 401
-	 */
-	public function testApiKeyEmptyString() {
 		new Ginger('', 'existepas');
 	}
 
-	/*
+	/**
+	 * @depends testInit
+	 * @expectedException		 \Koala\ApiException
+	 * @expectedExceptionCode	 401
+	 */
+	public function testApiKeyNull() {
+		new Ginger('', NULL);
+	}
+
+	/**
+	 * @depends testInit
+	 * @expectedException		 \Koala\ApiException
+	 * @expectedExceptionCode	 401
+	 */
+	public function testApiKeyEmptyString() {
+		new Ginger('', '');
+	}
+
+	/**
 	 * @depends testInit
 	 */
 	public function testGetPersonneDetails()
 	{
 		$ginger = new Ginger('http://localhost/accounts/', 'abc');
-		$details = $this->ginger->getPersonneDetails('trecouvr');
+		$details = $ginger->getPersonneDetails('trecouvr');
 		$expected_details = array(
 				"login" => 'trecouvr',
 				"nom" => 'Recouvreux',
 				"prenom" => 'Thomas',
 				"mail" => 'thomas.recouvreux@etu.utc.fr',
 				"type" => 'etu',
-				"is_adulte" => 1,
-				"is_cotisant" => 1,
+				"is_adulte" => true,
+				"is_cotisant" => false,
 				"badge_uid" => 'ABCDEF1234',
-				"expiration_badge" => '2013-07-01'
+				"expiration_badge" => null
 		);
-		$this->assertEqual($expected_details, $details);
+		$this->assertEquals($expected_details, $details);
 	}
 
 }
