@@ -1,6 +1,6 @@
 <?php
 
-
+mb_internal_encoding("UTF-8");
 
 /**
  * Skeleton subclass for representing a row from the 'personne' table.
@@ -32,8 +32,9 @@ class Personne extends BasePersonne
 		
 		if($personneData){
 			$this->setLogin($personneData->username);
-			$this->setPrenom(ucfirst(preg_replace("/(\s+|-)(\w)/e","'\\1' . strtoupper('\\2')",strtolower($personneData->firstName))));
-			$this->setNom(strtoupper($personneData->lastName));
+			$prenom = preg_replace("/(\s+|-)(\w)/ue", "'\\1'.mb_strtoupper('\\2')", mb_strtolower($personneData->firstName));
+			$this->setPrenom(preg_replace("/^(\w)/ue", "mb_strtoupper('\\1')", $prenom));
+			$this->setNom(mb_strtoupper($personneData->lastName));
 			$this->setMail($personneData->mail);
 			switch($personneData->profile){
 				case "ETU UTC":
