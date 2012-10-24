@@ -106,7 +106,23 @@ class Ginger {
 	}
 
 	public function findPersonne($loginPart) {
-		return Personne::find($loginPart);
+ 	 	$q = PersonneQuery::create();
+ 	 	$personnes = $q->filterByLogin("%$loginPart%")
+ 	 	               ->_or()
+ 	 	               ->filterByNom("%$loginPart%")
+ 	 	               ->_or()
+ 	 	               ->filterByPrenom("%$loginPart%")
+ 	 	               ->orderByLogin()
+ 	 	               ->find();
+
+ 	 	$liste = array();
+ 	 	foreach ($personnes as $personne) {
+ 	 	 	$liste[] = array('login' => $personne->getLogin(),
+ 	 	 	                 'nom' => $personne->getNom(),
+ 	 	 	                 'prenom' => $personne->getPrenom());
+ 	 	}
+
+		return $liste;
 	}
 
 	public function addCotisation($login, $debut, $fin, $montant) {
