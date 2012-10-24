@@ -46,7 +46,8 @@ CREATE TABLE `personne`
     `created_at` DATETIME,
     `updated_at` DATETIME,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `personne_U_1` (`login`, `badge_uid`)
+    UNIQUE INDEX `personne_U_1` (`login`),
+    UNIQUE INDEX `personne_U_2` (`badge_uid`)
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
