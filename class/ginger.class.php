@@ -39,7 +39,7 @@ class Ginger {
 			if($personne->isNew() && $this->auth->getDroitBadges()){
 				$personneData = $this->accounts->cardLookup($login);
 				
-				if($personneData->username){
+				if(!empty($personneData->username)){
 					$personne = PersonneQuery::create()
 									->filterByLogin($personneData->username)
 									->findOneOrCreate();
