@@ -18,6 +18,11 @@ class Personne extends BasePersonne
 	
 	public function isCotisant()
 	{
+		// Le personnel est membres d'honneur
+		if($this->getType() == "pers"){
+			return true;
+		}
+		
 		$crit = new Criteria();
 		$crit->add(CotisationPeer::DEBUT, Criteria::CURRENT_DATE, Criteria::LESS_EQUAL);
 		$crit->add(CotisationPeer::FIN, Criteria::CURRENT_DATE, Criteria::GREATER_EQUAL);
@@ -54,23 +59,6 @@ class Personne extends BasePersonne
 			$this->setExpirationBadge($personneData->cardEndDate/1000);
 			$this->setIsAdulte($personneData->legalAge);
 			$this->save();
-			
-			// Si c'est un personnel, il est membre d'honneur
-			if($this->getType() == "pers" && !$this->isCotisant()){
-				// Calcul des dates de la cotisation
-				$debut = date("Y-m-d");
-				$yearend = date("Y");
-				if(date("m") > 8) $yearend++;
-				$fin = "$yearend-08-31";
-        
-				// création de la nouvelle cotisation
-				$cotisation = new Cotisation();
-				$cotisation->setDebut($debut);
-				$cotisation->setFin($fin);
-				$cotisation->setPersonne($this);
-				$cotisation->setMontant(0);
-				$cotisation->save();
-			}
 			
 			return true;
 		}
