@@ -31,8 +31,8 @@ class AccountsApi {
 		$result = curl_exec($ch);
 		
 		// Si erreur d'appel de cron fatal
-		if(curl_error($ch) != 0){
-			throw new ApiException(500);
+		if(curl_errno($ch) != 0){
+			return false;
 		}
 		// Si erreur non trouvé, c'est pas fatal (on renverra 404 plus tard)
 		else if(curl_getinfo($ch, CURLINFO_HTTP_CODE) != 200){
