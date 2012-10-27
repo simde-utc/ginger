@@ -113,6 +113,7 @@ class Ginger {
  	 	               ->_or()
  	 	               ->filterByPrenom("%$loginPart%")
  	 	               ->orderByLogin()
+ 	 	               ->limit(10)
  	 	               ->find();
 
  	 	$liste = array();
