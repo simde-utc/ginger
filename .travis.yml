@@ -1,11 +1,13 @@
 language: php
 php:
-  - 5.4
   - 5.3
 before_script:
+  - mysql -e 'create database ginger_test;'
   - curl -s https://getcomposer.org/installer | php
   - php composer.phar install --dev
-  - mysql -e 'create database ginger_test;'
+  - cp test/conf/build.properties .
+  - cp test/conf/buildtime-conf.xml .
+  - ./propel-gen
   - cd test/
   - cp TestConfig.dist.php TestConfig.php
 script: ./phpunit *.test.php
