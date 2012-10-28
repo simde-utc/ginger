@@ -3,6 +3,7 @@ php:
   - 5.4
   - 5.3
 before_script:
+  - curl -s https://getcomposer.org/installer | php
   - php composer.phar install --dev
   - mysql -e 'create database ginger_test;'
   - cd test/
