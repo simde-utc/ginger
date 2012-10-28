@@ -7,6 +7,7 @@ before_script:
   - php composer.phar install --dev
   - cp test/conf/build.properties .
   - cp test/conf/buildtime-conf.xml .
+  - cp config.dist.php config.php
   - chmod +x vendor/propel/propel1/generator/bin/phing.php
   - ./propel-gen
   - cd test/
