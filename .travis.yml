@@ -2,4 +2,9 @@ language: php
 php:
   - 5.4
   - 5.3
-script: ./test/phpunit
+before_script:
+  - php composer.phar install --dev
+  - mysql -e 'create database ginger_test;'
+  - cd test/
+  - cp TestConfig.dist.php TestConfig.php
+script: ./phpunit *.test.php

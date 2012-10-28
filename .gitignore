@@ -20,3 +20,5 @@ Thumbs.db
 /buildtime-conf.xml
 /build/conf/ginger-conf.php
 phpunit.xml
+
+test/TestConfig.php

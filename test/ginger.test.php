@@ -9,6 +9,7 @@ set_include_path("../build/classes" . PATH_SEPARATOR . get_include_path());
 require_once '../config.php';
 require_once '../class/ginger.class.php';
 require_once '../class/Koala.class.php';
+require_once 'TestConfig.php';
 require_once 'ginger-client/KoalaClient.class.php';
 
 class TruncateOperation extends \PHPUnit_Extensions_Database_Operation_Truncate
@@ -54,7 +55,7 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 	
 	public function getConnection()
 	{
-		$pdo = new PDO('mysql:dbname='.Config::$SQL_DB.';host='.Config::$SQL_HOST, Config::$SQL_USER, Config::$SQL_PASSWORD);
+		$pdo = new PDO('mysql:dbname='.TestConfig::$SQL_DB.';host='.TestConfig::$SQL_HOST, TestConfig::$SQL_USER, TestConfig::$SQL_PASSWORD);
 		return $this->createDefaultDBConnection($pdo);
 	}
 
