@@ -52,7 +52,13 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 	 * get db connection
 	 */
 	public function getConnection() {
-		$pdo = new PDO('mysql:dbname='.$GLOBALS['SQL_DB'].';host='.$GLOBALS['SQL_HOST'], $GLOBALS['SQL_USER'], $GLOBALS['SQL_PASSWORD']);
+		if(empty($GLOBALS['SQL_PASSWORD'])){
+			$pdo = new PDO('mysql:dbname='.$GLOBALS['SQL_DB'].';host='.$GLOBALS['SQL_HOST'], $GLOBALS['SQL_USER']);
+		}
+		else {
+			$pdo = new PDO('mysql:dbname='.$GLOBALS['SQL_DB'].';host='.$GLOBALS['SQL_HOST'], $GLOBALS['SQL_USER'], $GLOBALS['SQL_PASSWORD']);
+		}
+		
 		return $this->createDefaultDBConnection($pdo);
 	}
 
