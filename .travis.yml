@@ -10,6 +10,7 @@ before_script:
   - cp config.dist.php config.php
   - chmod +x vendor/propel/propel1/generator/bin/phing.php
   - ./propel-gen
+  - ./propel-gen insert-sql
   - cd test/
   - cp phpunit.dist.xml phpunit.xml
 script: ./phpunit *.test.php
