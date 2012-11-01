@@ -19,6 +19,4 @@ Thumbs.db
 /build.properties
 /buildtime-conf.xml
 /build/conf/ginger-conf.php
-phpunit.xml
-
-test/TestConfig.php
+/test/phpunit.xml
