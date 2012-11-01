@@ -7,10 +7,10 @@ before_script:
   - php composer.phar install --dev
   - cp test/conf/build.properties .
   - cp test/conf/buildtime-conf.xml .
+  - cp test/conf/phpunit.xml test/phpunit.xml
   - cp config.dist.php config.php
   - chmod +x vendor/propel/propel1/generator/bin/phing.php
   - ./propel-gen
   - ./propel-gen insert-sql
   - cd test/
-  - cp phpunit.dist.xml phpunit.xml
 script: ./phpunit *.test.php
