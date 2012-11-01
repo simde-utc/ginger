@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpunit>
+    <php>
+        <var name="SQL_DB" value="ginger_test" />
+        <var name="SQL_HOST" value="localhost" />
+        <var name="SQL_USER" value="root" />
+        <var name="SQL_PASSWORD" value="" />
+    </php>
+</phpunit>

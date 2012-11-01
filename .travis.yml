@@ -11,5 +11,5 @@ before_script:
   - chmod +x vendor/propel/propel1/generator/bin/phing.php
   - ./propel-gen
   - cd test/
-  - cp TestConfig.dist.php TestConfig.php
+  - cp phpunit.dist.xml phpunit.xml
 script: ./phpunit *.test.php

@@ -9,8 +9,7 @@ set_include_path("../build/classes" . PATH_SEPARATOR . get_include_path());
 require_once '../config.php';
 require_once '../class/ginger.class.php';
 require_once '../class/Koala.class.php';
-require_once 'TestConfig.php';
-require_once 'ginger-client/KoalaClient.class.php';
+use \Koala\ApiException;
 
 class TruncateOperation extends \PHPUnit_Extensions_Database_Operation_Truncate
 {
@@ -19,12 +18,6 @@ class TruncateOperation extends \PHPUnit_Extensions_Database_Operation_Truncate
 		$connection->getConnection()->query("SET foreign_key_checks = 0");
 		parent::execute($connection, $dataSet);
 		$connection->getConnection()->query("SET foreign_key_checks = 1");
-	}
-}
-
-class BasicClient extends KoalaClient {
-	public function apiCall($endpoint, $params, $method) {
-		return parent::apiCall($GLOBALS['GINGER_URL'].$endpoint, $params, $method);
 	}
 }
 
@@ -42,9 +35,11 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 				"expiration_badge" => NULL // todo, les fixtures phpunits marchent pas
 		);
 	protected $client=NULL;
-	
-	public function getSetUpOperation()
-	{
+
+	/**
+	 * setupd db
+	 */
+	public function getSetUpOperation() {
 		$cascadeTruncates = false; // True if you want cascading truncates, false otherwise. If unsure choose false.
 
 		return new \PHPUnit_Extensions_Database_Operation_Composite(array(
@@ -52,73 +47,79 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 			\PHPUnit_Extensions_Database_Operation_Factory::INSERT()
 		));
 	}
-	
-	public function getConnection()
-	{
-		$pdo = new PDO('mysql:dbname='.TestConfig::$SQL_DB.';host='.TestConfig::$SQL_HOST, TestConfig::$SQL_USER, TestConfig::$SQL_PASSWORD);
+
+	/**
+	 * get db connection
+	 */
+	public function getConnection() {
+		$pdo = new PDO('mysql:dbname='.$GLOBALS['SQL_DB'].';host='.$GLOBALS['SQL_HOST'], $GLOBALS['SQL_USER'], $GLOBALS['SQL_PASSWORD']);
 		return $this->createDefaultDBConnection($pdo);
 	}
 
-	public function getDataSet()
-	{
+	/**
+	 * get db dataset
+	 */
+	public function getDataSet() {
 		return new PHPUnit_Extensions_Database_DataSet_YamlDataSet(dirname(__FILE__).'/ginger-seed.yml');
 	}
 
+	/**
+	 * setup before each tests
+	 */
 	public function setUp() {
-		if (!$this->client)
-			$this->client = new BasicClient();
 	}
-
-	protected function _testCurl($endPoint, $params, $method, $expected) {
-		$expected = json_decode(json_encode($expected));
-		$r = $this->client->apiCall($endPoint, $params, $method);
-		$this->assertEquals($expected, $r);
+	
+	public function testApiKeyValid() {
+		new Ginger('', 'abc');
 	}
 
 	/**
-	 * @expectedException		 ApiException
+	 * @expectedException		 \Koala\ApiException
 	 * @expectedExceptionCode	 403
 	 */
 	public function testApiKeyInvalid() {
-		$this->client->apiCall('/v1/trecouvr', array('key'=>'existepas'), 'GET');
+		new Ginger('', 'existepas');
 	}
 
 	/**
-	 * @expectedException		 ApiException
+	 * @expectedException		 \Koala\ApiException
 	 * @expectedExceptionCode	 401
 	 */
 	public function testApiKeyNull() {
-		$this->client->apiCall('/v1/trecouvr', array(), 'GET');
+		new Ginger('', NULL);
 	}
 
 	/**
-	 * @expectedException		 ApiException
+	 * @expectedException		 \Koala\ApiException
 	 * @expectedExceptionCode	 401
 	 */
 	public function testApiKeyEmptyString() {
-		$this->client->apiCall('/v1/trecouvr', array('key'=>''), 'GET');
+		new Ginger('', '');
 	}
 
 	/**
-	 * @requires function curl_init
+	 * @depends testApiKeyValid
 	 */
-	public function testGetPersonneDetails()
-	{
-		$this->_testCurl('/v1/trecouvr', array('key'=>'abc'), 'GET', $this->TRECOUVR_EXPECTED_DETAILS);
+	public function testGetPersonneDetails() {
+		$ginger = new Ginger('', 'abc');
+		$details = $ginger->getPersonneDetails('trecouvr');
+		$this->assertEquals($this->TRECOUVR_EXPECTED_DETAILS, $details);
 	}
 
 	/**
-	 * @requires function curl_init
+	 * @depends testApiKeyValid
 	 */
-	public function testlFindPersonne()
-	{
-		$this->_testCurl('/v1/find/trec', array('key'=>'abc'), 'GET', array(
+	public function testlFindPersonne() {
+		$ginger = new Ginger('', 'abc');
+		$details = $ginger->findPersonne('trec');
+		$this->assertEquals(array(
 			array(
 				'login'=>$this->TRECOUVR_EXPECTED_DETAILS['login'],
 				'nom'=>$this->TRECOUVR_EXPECTED_DETAILS['nom'],
 				'prenom'=>$this->TRECOUVR_EXPECTED_DETAILS['prenom'],
-			)
-		));
+			),),
+			$details
+		);
 	}
 }
 
