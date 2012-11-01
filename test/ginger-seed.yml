@@ -6,12 +6,12 @@ personne:
     nom: Recouvreux
     mail: thomas.recouvreux@etu.utc.fr
     type: 0
-    date_naissance: 1991-08-16
+    date_naissance: '1991-08-16'
     is_adulte: true
     badge_uid: ABCDEF1234
-    expiration_badge: 2013-07-01
-    created_at: 2012-10-01
-    updated_at: 2012-10-01
+    expiration_badge: '2013-07-01'
+    created_at: '2012-10-01'
+    updated_at: '2012-10-01'
 
 authkey:
   -
@@ -22,6 +22,6 @@ authkey:
     droit_ecriture: 1
     droit_badges: 1
     droit_cotisations: 1
-    created_at: 2012-10-01
-    updated_at: 2012-10-01
+    created_at: '2012-10-01'
+    updated_at: '2012-10-01'
   

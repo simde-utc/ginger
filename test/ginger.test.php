@@ -33,7 +33,7 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 			"is_adulte" => true,
 			"is_cotisant" => false,
 			"badge_uid" => 'ABCDEF1234',
-			"expiration_badge" => NULL // todo, les fixtures phpunits marchent pas
+			"expiration_badge" => '2013-07-01',
 	);
 	protected $client=NULL;
 
