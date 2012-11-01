@@ -13,8 +13,7 @@ use \Koala\ApiException;
 
 class TruncateOperation extends \PHPUnit_Extensions_Database_Operation_Truncate
 {
-	public function execute(\PHPUnit_Extensions_Database_DB_IDatabaseConnection $connection, \PHPUnit_Extensions_Database_DataSet_IDataSet $dataSet)
-	{
+	public function execute(\PHPUnit_Extensions_Database_DB_IDatabaseConnection $connection, \PHPUnit_Extensions_Database_DataSet_IDataSet $dataSet) {
 		$connection->getConnection()->query("SET foreign_key_checks = 0");
 		parent::execute($connection, $dataSet);
 		$connection->getConnection()->query("SET foreign_key_checks = 1");
@@ -23,6 +22,8 @@ class TruncateOperation extends \PHPUnit_Extensions_Database_Operation_Truncate
 
 class GingerTest extends PHPUnit_Extensions_Database_TestCase
 {
+	protected $pdo;
+
 	protected $TRECOUVR_EXPECTED_DETAILS = array(
 				"login" => 'trecouvr',
 				"nom" => 'Recouvreux',
@@ -36,12 +37,19 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 		);
 	protected $client=NULL;
 
+    public function __construct() {
+		$this->pdo = new PDO('mysql:dbname='.$GLOBALS['SQL_DB'].';host='.$GLOBALS['SQL_HOST'],
+			$GLOBALS['SQL_USER'],
+			$GLOBALS['SQL_PASSWORD']
+		);
+    }
+    
 	/**
 	 * setupd db
+	 * called in setUp()
 	 */
 	public function getSetUpOperation() {
 		$cascadeTruncates = false; // True if you want cascading truncates, false otherwise. If unsure choose false.
-
 		return new \PHPUnit_Extensions_Database_Operation_Composite(array(
 			new TruncateOperation($cascadeTruncates),
 			\PHPUnit_Extensions_Database_Operation_Factory::INSERT()
@@ -49,11 +57,18 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 	}
 
 	/**
+	 * clear db
+	 * called in tearDown()
+	 */
+	protected function getTearDownOperation() {
+        return $this->getOperations()->DELETE_ALL();
+    }
+
+	/**
 	 * get db connection
 	 */
 	public function getConnection() {
-		$pdo = new PDO('mysql:dbname='.$GLOBALS['SQL_DB'].';host='.$GLOBALS['SQL_HOST'], $GLOBALS['SQL_USER'], $GLOBALS['SQL_PASSWORD']);
-		return $this->createDefaultDBConnection($pdo);
+		return $this->createDefaultDBConnection($this->pdo);
 	}
 
 	/**
@@ -67,6 +82,14 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 	 * setup before each tests
 	 */
 	public function setUp() {
+		parent::setUp();
+	}
+	
+	/**
+	 * tearDown after each tests
+	 */
+	public function tearDown() {
+		parent::tearDown();
 	}
 	
 	public function testApiKeyValid() {
