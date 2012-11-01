@@ -7,7 +7,7 @@ Propel::init("../build/conf/ginger-conf.php");
 set_include_path("../build/classes" . PATH_SEPARATOR . get_include_path());
 
 require_once '../config.php';
-require_once '../class/ginger.class.php';
+require_once '../class/Ginger.class.php';
 require_once '../class/Koala.class.php';
 use \Koala\ApiException;
 
