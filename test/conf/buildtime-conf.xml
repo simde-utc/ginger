@@ -5,9 +5,8 @@
       <datasource id="ginger">
         <adapter>mysql</adapter> <!-- sqlite, mysql, mssql, oracle, or pgsql -->
         <connection>
-          <dsn>mysql:host=localhost;dbname=ginger</dsn>
+          <dsn>mysql:host=localhost;dbname=ginger_test</dsn>
           <user>root</user>
-          <password>root</password>
           <settings>
           	<setting id="charset">utf8</setting>
           </settings>
