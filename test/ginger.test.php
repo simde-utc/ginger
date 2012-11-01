@@ -25,16 +25,16 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 	protected $pdo;
 
 	protected $TRECOUVR_EXPECTED_DETAILS = array(
-				"login" => 'trecouvr',
-				"nom" => 'Recouvreux',
-				"prenom" => 'Thomas',
-				"mail" => 'thomas.recouvreux@etu.utc.fr',
-				"type" => 'etu',
-				"is_adulte" => true,
-				"is_cotisant" => false,
-				"badge_uid" => 'ABCDEF1234',
-				"expiration_badge" => NULL // todo, les fixtures phpunits marchent pas
-		);
+			"login" => 'trecouvr',
+			"nom" => 'Recouvreux',
+			"prenom" => 'Thomas',
+			"mail" => 'thomas.recouvreux@etu.utc.fr',
+			"type" => 'etu',
+			"is_adulte" => true,
+			"is_cotisant" => false,
+			"badge_uid" => 'ABCDEF1234',
+			"expiration_badge" => NULL // todo, les fixtures phpunits marchent pas
+	);
 	protected $client=NULL;
 
     public function __construct() {

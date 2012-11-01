@@ -5,7 +5,7 @@ personne:
     prenom: Thomas
     nom: Recouvreux
     mail: thomas.recouvreux@etu.utc.fr
-    type: etu
+    type: 0
     date_naissance: 1991-08-16
     is_adulte: true
     badge_uid: ABCDEF1234
