@@ -96,11 +96,16 @@ class Ginger {
 		
 		$r = array();
 		foreach($cotisations as $cotisation) {
-			$r[] = array(
+			$cot = array(
+				"id" => $cotisation->getId(),
 				"debut" => $cotisation->getDebut(),
 				"fin" => $cotisation->getFin(),		
 				"montant" => $cotisation->getMontant(),
 			);
+			if ($cotisation->getDeletedAt()) {
+				$cot["deleted_at"] = $cotisation->getDeletedAt();
+			}
+			$r[] = $cot;
 		}
 		return $r;
 	}
@@ -147,6 +152,25 @@ class Ginger {
 		$cotisation->save();
 
 		return $cotisation->getid();
+	}
+
+	public function deleteCotisation($id_cotisation) {
+		// check les droits
+		if(!$this->auth->getDroitEcriture() || !$this->auth->getDroitCotisations())
+			throw new ApiException(403);
+
+		// récupérer la cotisation
+		$cotisation = CotisationQuery::create()
+						->findPk($id_cotisation);
+		
+		// si elle n'existe pas on lance une 404
+		if(!$cotisation)
+			throw new ApiException(404);
+
+		// sinon on la detruit
+		$cotisation->delete();
+		
+		return True;
 	}
 }
 

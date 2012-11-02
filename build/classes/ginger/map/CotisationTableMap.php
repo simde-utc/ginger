@@ -45,6 +45,7 @@ class CotisationTableMap extends TableMap
         $this->addColumn('MONTANT', 'Montant', 'DECIMAL', true, 5, null);
         $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
+        $this->addColumn('DELETED_AT', 'DeletedAt', 'TIMESTAMP', false, null, null);
         // validators
     } // initialize()
 
@@ -66,6 +67,7 @@ class CotisationTableMap extends TableMap
     {
         return array(
             'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_updated_at' => 'false', ),
+            'soft_delete' => array('deleted_column' => 'deleted_at', ),
         );
     } // getBehaviors()
 

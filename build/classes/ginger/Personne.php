@@ -16,21 +16,21 @@ mb_internal_encoding("UTF-8");
 class Personne extends BasePersonne
 {
 	
-	public function isCotisant()
-	{
+	public function isCotisant() {
 		// Le personnel est membres d'honneur
-		if($this->getType() == "pers"){
+		if($this->getType() == "pers") {
 			return true;
 		}
 		
 		$crit = new Criteria();
 		$crit->add(CotisationPeer::DEBUT, Criteria::CURRENT_DATE, Criteria::LESS_EQUAL);
 		$crit->add(CotisationPeer::FIN, Criteria::CURRENT_DATE, Criteria::GREATER_EQUAL);
+		$crit->add(CotisationPeer::DELETED_AT, NULL ,Criteria::ISNULL);
 		
 		return !$this->getCotisations($crit)->isEmpty();
 	}
 	
-	public function updateFromAccounts($accounts){
+	public function updateFromAccounts($accounts) {
 		if($this->getLogin()){
 			$personneData = $accounts->getUserInfo($this->getLogin());
 		}
