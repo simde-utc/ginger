@@ -62,8 +62,10 @@ class ApiException extends \Exception {
 
 
 class KoalaAuth {
-	public function auth() {
-		if(empty($_REQUEST['key'])) throw new ApiException(401);
+	public function auth($app) {
+		$key = $app->request()->params('key');
+		if(empty($key))
+			throw new ApiException(401);
 	}
 }
 
@@ -81,7 +83,7 @@ class Koala extends \Slim\Slim {
 	}
 
 	public function auth() {
-		$this->auth->auth();
+		$this->auth->auth($this);
 	}
 
 	public function on404() {
