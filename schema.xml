@@ -7,6 +7,7 @@
     <column name="fin" type="date" required="true"/>
     <column name="montant" type="decimal" size="5" scale="2" required="true" />
     <behavior name="timestampable" />
+    <behavior name="soft_delete" />
     <foreign-key foreignTable="personne" phpName="Personne" refPhpName="Cotisation">
       <reference local="personne_id" foreign="id"/>
     </foreign-key>

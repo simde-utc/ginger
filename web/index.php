@@ -14,9 +14,9 @@ require_once '../class/Ginger.class.php';
 
 class MyAuth extends \Koala\KoalaAuth {
 	public $ginger;
-	public function auth() {
-		parent::auth();
-		$this->ginger = new Ginger(Config::$ACCOUNTS_URL, $_REQUEST['key']);
+	public function auth($app) {
+		parent::auth($app);
+		$this->ginger = new Ginger(Config::$ACCOUNTS_URL, $app->request()->params('key'));
 	}
 }
 $myAuth = new MyAuth();
@@ -52,10 +52,19 @@ $app->get('/v1/find/:loginpart', function ($loginpart) use ($app, $myAuth) {
 
 // ajout d'une cotisation
 $app->post('/v1/:login/cotisations', function ($login) use ($app, $myAuth) {
-	if (empty($_POST['debut']) or empty($_POST['fin']) or empty($_POST['montant']))
+	$debut = $app->request()->params('debut');
+	$fin = $app->request()->params('fin');
+	$montant = $app->request()->params('montant');
+	if (empty($debut) or empty($fin) or empty($montant))
 		throw new \Koala\ApiException(400);
 	
-	$r = $myAuth->ginger->addCotisation($login, strtotime($_POST['debut']), strtotime($_POST['fin']), $_POST['montant']);
+	$r = $myAuth->ginger->addCotisation($login, strtotime($debut), strtotime($fin), $montant);
+	$app->render('success.json.php', array('result'=>$r));
+});
+
+// suppression d'une cotisation
+$app->delete('/v1/cotisations/:cotisation', function ($cotisation) use ($app, $myAuth) {
+	$r = $myAuth->ginger->deleteCotisation($cotisation);
 	$app->render('success.json.php', array('result'=>$r));
 });
 
