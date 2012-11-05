@@ -24,17 +24,29 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 {
 	protected $pdo;
 
-	protected $TRECOUVR_EXPECTED_DETAILS = array(
+	protected function getPersonneDetails() {
+		return array(
 			"login" => 'trecouvr',
 			"nom" => 'Recouvreux',
 			"prenom" => 'Thomas',
 			"mail" => 'thomas.recouvreux@etu.utc.fr',
 			"type" => 'etu',
 			"is_adulte" => true,
-			"is_cotisant" => false,
+			"is_cotisant" => true,
 			"badge_uid" => 'ABCDEF1234',
 			"expiration_badge" => '2013-07-01',
-	);
+		);
+	}
+
+	protected function getCotisation() {
+		return array(
+				"id" => 1,
+				"debut" => '2012-09-01',
+				"fin" => '2013-09-01',
+				"montant" => 20,
+		);
+	}
+	
 	protected $client=NULL;
 
     public function __construct() {
@@ -125,24 +137,72 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 	 */
 	public function testGetPersonneDetails() {
 		$ginger = new Ginger('', 'abc');
-		$details = $ginger->getPersonneDetails('trecouvr');
-		$this->assertEquals($this->TRECOUVR_EXPECTED_DETAILS, $details);
+		$expected_details = $this->getPersonneDetails();
+		$details = $ginger->getPersonneDetails($expected_details['login']);
+		$this->assertEquals($expected_details, $details);
+		$details = $ginger->getPersonneDetails($expected_details['badge_uid']);
+		$this->assertEquals($expected_details, $details);
 	}
 
 	/**
 	 * @depends testApiKeyValid
 	 */
-	public function testlFindPersonne() {
+	public function testFindPersonne() {
 		$ginger = new Ginger('', 'abc');
+		$expected_details = $this->getPersonneDetails();
 		$details = $ginger->findPersonne('trec');
 		$this->assertEquals(array(
 			array(
-				'login'=>$this->TRECOUVR_EXPECTED_DETAILS['login'],
-				'nom'=>$this->TRECOUVR_EXPECTED_DETAILS['nom'],
-				'prenom'=>$this->TRECOUVR_EXPECTED_DETAILS['prenom'],
+				'login'=>$expected_details['login'],
+				'nom'=>$expected_details['nom'],
+				'prenom'=>$expected_details['prenom'],
 			),),
 			$details
 		);
+	}
+
+	public function testGetCotisations() {
+		$ginger = new Ginger('', 'abc');
+		$expected_cotisation = $this->getCotisation();
+		$cotisations = $ginger->getPersonneCotisations('trecouvr');
+		$this->assertEquals(array($expected_cotisation,), $cotisations);
+	}
+
+	/**
+	 * @depends testGetPersonneDetails
+	 * @depends testGetCotisations
+	 */
+	public function testDeleteCotisation() {
+		$ginger = new Ginger('', 'abc');
+		$ginger->deleteCotisation(1);
+		
+		$expected_cotisation = $this->getCotisation();
+		$cotisations = $ginger->getPersonneCotisations('trecouvr');
+		$cotisation = $cotisations[0];
+		$this->assertArrayHasKey("deleted_at", $cotisation);
+		$this->assertNotNull($cotisation["deleted_at"]);
+		unset($cotisation["deleted_at"]);
+		$this->assertEquals($expected_cotisation, $cotisation);
+	}
+
+	public function coucou() {
+		$this->assertEquals(1, 0);
+	}
+	
+	/**
+	 * @depends testGetPersonneDetails
+	 * @depends testDeleteCotisation
+	 */
+	public function testIsCotisant() {
+		$ginger = new Ginger('', 'abc');
+		$expected_details = $this->getPersonneDetails();
+		
+		$details = $ginger->getPersonneDetails($expected_details['login']);
+		$this->assertTrue($details["is_cotisant"]);
+		
+		$ginger->deleteCotisation(1);
+		$details = $ginger->getPersonneDetails($expected_details['login']);
+		$this->assertFalse($details["is_cotisant"]);
 	}
 }
 

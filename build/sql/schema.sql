@@ -18,6 +18,7 @@ CREATE TABLE `cotisation`
     `montant` DECIMAL(5,2) NOT NULL,
     `created_at` DATETIME,
     `updated_at` DATETIME,
+    `deleted_at` DATETIME,
     PRIMARY KEY (`id`),
     INDEX `cotisation_FI_1` (`personne_id`),
     CONSTRAINT `cotisation_FK_1`

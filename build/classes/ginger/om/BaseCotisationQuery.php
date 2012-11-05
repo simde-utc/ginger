@@ -13,6 +13,7 @@
  * @method CotisationQuery orderByMontant($order = Criteria::ASC) Order by the montant column
  * @method CotisationQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method CotisationQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
+ * @method CotisationQuery orderByDeletedAt($order = Criteria::ASC) Order by the deleted_at column
  *
  * @method CotisationQuery groupById() Group by the id column
  * @method CotisationQuery groupByPersonneId() Group by the personne_id column
@@ -21,6 +22,7 @@
  * @method CotisationQuery groupByMontant() Group by the montant column
  * @method CotisationQuery groupByCreatedAt() Group by the created_at column
  * @method CotisationQuery groupByUpdatedAt() Group by the updated_at column
+ * @method CotisationQuery groupByDeletedAt() Group by the deleted_at column
  *
  * @method CotisationQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method CotisationQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -40,6 +42,7 @@
  * @method Cotisation findOneByMontant(string $montant) Return the first Cotisation filtered by the montant column
  * @method Cotisation findOneByCreatedAt(string $created_at) Return the first Cotisation filtered by the created_at column
  * @method Cotisation findOneByUpdatedAt(string $updated_at) Return the first Cotisation filtered by the updated_at column
+ * @method Cotisation findOneByDeletedAt(string $deleted_at) Return the first Cotisation filtered by the deleted_at column
  *
  * @method array findById(int $id) Return Cotisation objects filtered by the id column
  * @method array findByPersonneId(int $personne_id) Return Cotisation objects filtered by the personne_id column
@@ -48,11 +51,16 @@
  * @method array findByMontant(string $montant) Return Cotisation objects filtered by the montant column
  * @method array findByCreatedAt(string $created_at) Return Cotisation objects filtered by the created_at column
  * @method array findByUpdatedAt(string $updated_at) Return Cotisation objects filtered by the updated_at column
+ * @method array findByDeletedAt(string $deleted_at) Return Cotisation objects filtered by the deleted_at column
  *
  * @package    propel.generator.ginger.om
  */
 abstract class BaseCotisationQuery extends ModelCriteria
 {
+    // soft_delete behavior
+    protected static $softDelete = true;
+    protected $localSoftDelete = true;
+
     /**
      * Initializes internal state of BaseCotisationQuery object.
      *
@@ -137,7 +145,7 @@ abstract class BaseCotisationQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT `ID`, `PERSONNE_ID`, `DEBUT`, `FIN`, `MONTANT`, `CREATED_AT`, `UPDATED_AT` FROM `cotisation` WHERE `ID` = :p0';
+        $sql = 'SELECT `ID`, `PERSONNE_ID`, `DEBUT`, `FIN`, `MONTANT`, `CREATED_AT`, `UPDATED_AT`, `DELETED_AT` FROM `cotisation` WHERE `ID` = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -510,6 +518,49 @@ abstract class BaseCotisationQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the deleted_at column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByDeletedAt('2011-03-14'); // WHERE deleted_at = '2011-03-14'
+     * $query->filterByDeletedAt('now'); // WHERE deleted_at = '2011-03-14'
+     * $query->filterByDeletedAt(array('max' => 'yesterday')); // WHERE deleted_at > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $deletedAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return CotisationQuery The current query, for fluid interface
+     */
+    public function filterByDeletedAt($deletedAt = null, $comparison = null)
+    {
+        if (is_array($deletedAt)) {
+            $useMinMax = false;
+            if (isset($deletedAt['min'])) {
+                $this->addUsingAlias(CotisationPeer::DELETED_AT, $deletedAt['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($deletedAt['max'])) {
+                $this->addUsingAlias(CotisationPeer::DELETED_AT, $deletedAt['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(CotisationPeer::DELETED_AT, $deletedAt, $comparison);
+    }
+
+    /**
      * Filter the query by a related Personne object
      *
      * @param   Personne|PropelObjectCollection $personne The related object(s) to use as filter
@@ -601,6 +652,40 @@ abstract class BaseCotisationQuery extends ModelCriteria
         return $this;
     }
 
+    /**
+     * Code to execute before every SELECT statement
+     *
+     * @param     PropelPDO $con The connection object used by the query
+     */
+    protected function basePreSelect(PropelPDO $con)
+    {
+        // soft_delete behavior
+        if (CotisationQuery::isSoftDeleteEnabled() && $this->localSoftDelete) {
+            $this->addUsingAlias(CotisationPeer::DELETED_AT, null, Criteria::ISNULL);
+        } else {
+            CotisationPeer::enableSoftDelete();
+        }
+
+        return $this->preSelect($con);
+    }
+
+    /**
+     * Code to execute before every DELETE statement
+     *
+     * @param     PropelPDO $con The connection object used by the query
+     */
+    protected function basePreDelete(PropelPDO $con)
+    {
+        // soft_delete behavior
+        if (CotisationQuery::isSoftDeleteEnabled() && $this->localSoftDelete) {
+            return $this->softDelete($con);
+        } else {
+            return $this->hasWhereClause() ? $this->forceDelete($con) : $this->forceDeleteAll($con);
+        }
+
+        return $this->preDelete($con);
+    }
+
     // timestampable behavior
 
     /**
@@ -666,4 +751,94 @@ abstract class BaseCotisationQuery extends ModelCriteria
     {
         return $this->addAscendingOrderByColumn(CotisationPeer::CREATED_AT);
     }
+    // soft_delete behavior
+
+    /**
+     * Temporarily disable the filter on deleted rows
+     * Valid only for the current query
+     *
+     * @see CotisationQuery::disableSoftDelete() to disable the filter for more than one query
+     *
+     * @return CotisationQuery The current query, for fluid interface
+     */
+    public function includeDeleted()
+    {
+        $this->localSoftDelete = false;
+
+        return $this;
+    }
+
+    /**
+     * Soft delete the selected rows
+     *
+     * @param			PropelPDO $con an optional connection object
+     *
+     * @return		int Number of updated rows
+     */
+    public function softDelete(PropelPDO $con = null)
+    {
+        return $this->update(array('DeletedAt' => time()), $con);
+    }
+
+    /**
+     * Bypass the soft_delete behavior and force a hard delete of the selected rows
+     *
+     * @param			PropelPDO $con an optional connection object
+     *
+     * @return		int Number of deleted rows
+     */
+    public function forceDelete(PropelPDO $con = null)
+    {
+        return CotisationPeer::doForceDelete($this, $con);
+    }
+
+    /**
+     * Bypass the soft_delete behavior and force a hard delete of all the rows
+     *
+     * @param			PropelPDO $con an optional connection object
+     *
+     * @return		int Number of deleted rows
+     */
+    public function forceDeleteAll(PropelPDO $con = null)
+    {
+        return CotisationPeer::doForceDeleteAll($con);}
+
+    /**
+     * Undelete selected rows
+     *
+     * @param			PropelPDO $con an optional connection object
+     *
+     * @return		int The number of rows affected by this update and any referring fk objects' save() operations.
+     */
+    public function unDelete(PropelPDO $con = null)
+    {
+        return $this->update(array('DeletedAt' => null), $con);
+    }
+
+    /**
+     * Enable the soft_delete behavior for this model
+     */
+    public static function enableSoftDelete()
+    {
+        self::$softDelete = true;
+    }
+
+    /**
+     * Disable the soft_delete behavior for this model
+     */
+    public static function disableSoftDelete()
+    {
+        self::$softDelete = false;
+    }
+
+    /**
+     * Check the soft_delete behavior for this model
+     *
+     * @return boolean true if the soft_delete behavior is enabled
+     */
+    public static function isSoftDeleteEnabled()
+    {
+        return self::$softDelete;
+    }
+
 }

@@ -24,13 +24,13 @@ abstract class BaseCotisationPeer
     const TM_CLASS = 'CotisationTableMap';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 7;
+    const NUM_COLUMNS = 8;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
     /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-    const NUM_HYDRATE_COLUMNS = 7;
+    const NUM_HYDRATE_COLUMNS = 8;
 
     /** the column name for the ID field */
     const ID = 'cotisation.ID';
@@ -53,6 +53,9 @@ abstract class BaseCotisationPeer
     /** the column name for the UPDATED_AT field */
     const UPDATED_AT = 'cotisation.UPDATED_AT';
 
+    /** the column name for the DELETED_AT field */
+    const DELETED_AT = 'cotisation.DELETED_AT';
+
     /** The default string format for model objects of the related table **/
     const DEFAULT_STRING_FORMAT = 'YAML';
 
@@ -72,12 +75,12 @@ abstract class BaseCotisationPeer
      * e.g. CotisationPeer::$fieldNames[CotisationPeer::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Id', 'PersonneId', 'Debut', 'Fin', 'Montant', 'CreatedAt', 'UpdatedAt', ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'personneId', 'debut', 'fin', 'montant', 'createdAt', 'updatedAt', ),
-        BasePeer::TYPE_COLNAME => array (CotisationPeer::ID, CotisationPeer::PERSONNE_ID, CotisationPeer::DEBUT, CotisationPeer::FIN, CotisationPeer::MONTANT, CotisationPeer::CREATED_AT, CotisationPeer::UPDATED_AT, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'PERSONNE_ID', 'DEBUT', 'FIN', 'MONTANT', 'CREATED_AT', 'UPDATED_AT', ),
-        BasePeer::TYPE_FIELDNAME => array ('id', 'personne_id', 'debut', 'fin', 'montant', 'created_at', 'updated_at', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
+        BasePeer::TYPE_PHPNAME => array ('Id', 'PersonneId', 'Debut', 'Fin', 'Montant', 'CreatedAt', 'UpdatedAt', 'DeletedAt', ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'personneId', 'debut', 'fin', 'montant', 'createdAt', 'updatedAt', 'deletedAt', ),
+        BasePeer::TYPE_COLNAME => array (CotisationPeer::ID, CotisationPeer::PERSONNE_ID, CotisationPeer::DEBUT, CotisationPeer::FIN, CotisationPeer::MONTANT, CotisationPeer::CREATED_AT, CotisationPeer::UPDATED_AT, CotisationPeer::DELETED_AT, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID', 'PERSONNE_ID', 'DEBUT', 'FIN', 'MONTANT', 'CREATED_AT', 'UPDATED_AT', 'DELETED_AT', ),
+        BasePeer::TYPE_FIELDNAME => array ('id', 'personne_id', 'debut', 'fin', 'montant', 'created_at', 'updated_at', 'deleted_at', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
     /**
@@ -87,12 +90,12 @@ abstract class BaseCotisationPeer
      * e.g. CotisationPeer::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'PersonneId' => 1, 'Debut' => 2, 'Fin' => 3, 'Montant' => 4, 'CreatedAt' => 5, 'UpdatedAt' => 6, ),
-        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'personneId' => 1, 'debut' => 2, 'fin' => 3, 'montant' => 4, 'createdAt' => 5, 'updatedAt' => 6, ),
-        BasePeer::TYPE_COLNAME => array (CotisationPeer::ID => 0, CotisationPeer::PERSONNE_ID => 1, CotisationPeer::DEBUT => 2, CotisationPeer::FIN => 3, CotisationPeer::MONTANT => 4, CotisationPeer::CREATED_AT => 5, CotisationPeer::UPDATED_AT => 6, ),
-        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'PERSONNE_ID' => 1, 'DEBUT' => 2, 'FIN' => 3, 'MONTANT' => 4, 'CREATED_AT' => 5, 'UPDATED_AT' => 6, ),
-        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'personne_id' => 1, 'debut' => 2, 'fin' => 3, 'montant' => 4, 'created_at' => 5, 'updated_at' => 6, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
+        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'PersonneId' => 1, 'Debut' => 2, 'Fin' => 3, 'Montant' => 4, 'CreatedAt' => 5, 'UpdatedAt' => 6, 'DeletedAt' => 7, ),
+        BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'personneId' => 1, 'debut' => 2, 'fin' => 3, 'montant' => 4, 'createdAt' => 5, 'updatedAt' => 6, 'deletedAt' => 7, ),
+        BasePeer::TYPE_COLNAME => array (CotisationPeer::ID => 0, CotisationPeer::PERSONNE_ID => 1, CotisationPeer::DEBUT => 2, CotisationPeer::FIN => 3, CotisationPeer::MONTANT => 4, CotisationPeer::CREATED_AT => 5, CotisationPeer::UPDATED_AT => 6, CotisationPeer::DELETED_AT => 7, ),
+        BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'PERSONNE_ID' => 1, 'DEBUT' => 2, 'FIN' => 3, 'MONTANT' => 4, 'CREATED_AT' => 5, 'UPDATED_AT' => 6, 'DELETED_AT' => 7, ),
+        BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'personne_id' => 1, 'debut' => 2, 'fin' => 3, 'montant' => 4, 'created_at' => 5, 'updated_at' => 6, 'deleted_at' => 7, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
     /**
@@ -173,6 +176,7 @@ abstract class BaseCotisationPeer
             $criteria->addSelectColumn(CotisationPeer::MONTANT);
             $criteria->addSelectColumn(CotisationPeer::CREATED_AT);
             $criteria->addSelectColumn(CotisationPeer::UPDATED_AT);
+            $criteria->addSelectColumn(CotisationPeer::DELETED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.ID');
             $criteria->addSelectColumn($alias . '.PERSONNE_ID');
@@ -181,6 +185,7 @@ abstract class BaseCotisationPeer
             $criteria->addSelectColumn($alias . '.MONTANT');
             $criteria->addSelectColumn($alias . '.CREATED_AT');
             $criteria->addSelectColumn($alias . '.UPDATED_AT');
+            $criteria->addSelectColumn($alias . '.DELETED_AT');
         }
     }
 
@@ -215,6 +220,12 @@ abstract class BaseCotisationPeer
 
         if ($con === null) {
             $con = Propel::getConnection(CotisationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+        }
+        // soft_delete behavior
+        if (CotisationQuery::isSoftDeleteEnabled()) {
+            $criteria->add(CotisationPeer::DELETED_AT, null, Criteria::ISNULL);
+        } else {
+            CotisationPeer::enableSoftDelete();
         }
         // BasePeer returns a PDOStatement
         $stmt = BasePeer::doCount($criteria, $con);
@@ -287,6 +298,12 @@ abstract class BaseCotisationPeer
 
         // Set the correct dbName
         $criteria->setDbName(CotisationPeer::DATABASE_NAME);
+        // soft_delete behavior
+        if (CotisationQuery::isSoftDeleteEnabled()) {
+            $criteria->add(CotisationPeer::DELETED_AT, null, Criteria::ISNULL);
+        } else {
+            CotisationPeer::enableSoftDelete();
+        }
 
         // BasePeer returns a PDOStatement
         return BasePeer::doSelect($criteria, $con);
@@ -515,6 +532,12 @@ abstract class BaseCotisationPeer
 
         $criteria->addJoin(CotisationPeer::PERSONNE_ID, PersonnePeer::ID, $join_behavior);
 
+        // soft_delete behavior
+        if (CotisationQuery::isSoftDeleteEnabled()) {
+            $criteria->add(CotisationPeer::DELETED_AT, null, Criteria::ISNULL);
+        } else {
+            CotisationPeer::enableSoftDelete();
+        }
         $stmt = BasePeer::doCount($criteria, $con);
 
         if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -552,6 +575,12 @@ abstract class BaseCotisationPeer
 
         $criteria->addJoin(CotisationPeer::PERSONNE_ID, PersonnePeer::ID, $join_behavior);
 
+        // soft_delete behavior
+        if (CotisationQuery::isSoftDeleteEnabled()) {
+            $criteria->add(CotisationPeer::DELETED_AT, null, Criteria::ISNULL);
+        } else {
+            CotisationPeer::enableSoftDelete();
+        }
         $stmt = BasePeer::doSelect($criteria, $con);
         $results = array();
 
@@ -633,6 +662,12 @@ abstract class BaseCotisationPeer
 
         $criteria->addJoin(CotisationPeer::PERSONNE_ID, PersonnePeer::ID, $join_behavior);
 
+        // soft_delete behavior
+        if (CotisationQuery::isSoftDeleteEnabled()) {
+            $criteria->add(CotisationPeer::DELETED_AT, null, Criteria::ISNULL);
+        } else {
+            CotisationPeer::enableSoftDelete();
+        }
         $stmt = BasePeer::doCount($criteria, $con);
 
         if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -672,6 +707,12 @@ abstract class BaseCotisationPeer
 
         $criteria->addJoin(CotisationPeer::PERSONNE_ID, PersonnePeer::ID, $join_behavior);
 
+        // soft_delete behavior
+        if (CotisationQuery::isSoftDeleteEnabled()) {
+            $criteria->add(CotisationPeer::DELETED_AT, null, Criteria::ISNULL);
+        } else {
+            CotisationPeer::enableSoftDelete();
+        }
         $stmt = BasePeer::doSelect($criteria, $con);
         $results = array();
 
@@ -837,7 +878,7 @@ abstract class BaseCotisationPeer
      * @return int             The number of affected rows (if supported by underlying database driver).
      * @throws PropelException
      */
-    public static function doDeleteAll(PropelPDO $con = null)
+    public static function doForceDeleteAll(PropelPDO $con = null)
     {
         if ($con === null) {
             $con = Propel::getConnection(CotisationPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
@@ -873,7 +914,7 @@ abstract class BaseCotisationPeer
      * @throws PropelException Any exceptions caught during processing will be
      *		 rethrown wrapped into a PropelException.
      */
-     public static function doDelete($values, PropelPDO $con = null)
+     public static function doForceDelete($values, PropelPDO $con = null)
      {
         if ($con === null) {
             $con = Propel::getConnection(CotisationPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
@@ -1009,6 +1050,126 @@ abstract class BaseCotisationPeer
         }
 
         return $objs;
+    }
+
+    // soft_delete behavior
+
+    /**
+     * Enable the soft_delete behavior for this model
+     */
+    public static function enableSoftDelete()
+    {
+        CotisationQuery::enableSoftDelete();
+        // some soft_deleted objects may be in the instance pool
+        CotisationPeer::clearInstancePool();
+    }
+
+    /**
+     * Disable the soft_delete behavior for this model
+     */
+    public static function disableSoftDelete()
+    {
+        CotisationQuery::disableSoftDelete();
+    }
+
+    /**
+     * Check the soft_delete behavior for this model
+     * @return boolean true if the soft_delete behavior is enabled
+     */
+    public static function isSoftDeleteEnabled()
+    {
+        return CotisationQuery::isSoftDeleteEnabled();
+    }
+
+    /**
+     * Soft delete records, given a Cotisation or Criteria object OR a primary key value.
+     *
+     * @param			 mixed $values Criteria or Cotisation object or primary key or array of primary keys
+     *							which is used to create the DELETE statement
+     * @param			 PropelPDO $con the connection to use
+     * @return		 int	The number of affected rows (if supported by underlying database driver).
+     * @throws		 PropelException Any exceptions caught during processing will be
+     *							rethrown wrapped into a PropelException.
+     */
+    public static function doSoftDelete($values, PropelPDO $con = null)
+    {
+        if ($con === null) {
+            $con = Propel::getConnection(CotisationPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+        }
+        if ($values instanceof Criteria) {
+            // rename for clarity
+            $selectCriteria = clone $values;
+         } elseif ($values instanceof Cotisation) {
+            // create criteria based on pk values
+            $selectCriteria = $values->buildPkeyCriteria();
+        } else {
+            // it must be the primary key
+            $selectCriteria = new Criteria(self::DATABASE_NAME);
+             $selectCriteria->add(CotisationPeer::ID, (array) $values, Criteria::IN);
+        }
+        // Set the correct dbName
+        $selectCriteria->setDbName(CotisationPeer::DATABASE_NAME);
+        $updateCriteria = new Criteria(self::DATABASE_NAME);
+        $updateCriteria->add(CotisationPeer::DELETED_AT, time());
+
+         return BasePeer::doUpdate($selectCriteria, $updateCriteria, $con);
+    }
+
+    /**
+     * Delete or soft delete records, depending on CotisationPeer::$softDelete
+     *
+     * @param			 mixed $values Criteria or Cotisation object or primary key or array of primary keys
+     *							which is used to create the DELETE statement
+     * @param			 PropelPDO $con the connection to use
+     * @return		 int	The number of affected rows (if supported by underlying database driver).
+     * @throws		 PropelException Any exceptions caught during processing will be
+     *							rethrown wrapped into a PropelException.
+     */
+    public static function doDelete($values, PropelPDO $con = null)
+    {
+        if (CotisationPeer::isSoftDeleteEnabled()) {
+            return CotisationPeer::doSoftDelete($values, $con);
+        } else {
+            return CotisationPeer::doForceDelete($values, $con);
+        }
+    }
+    /**
+     * Method to soft delete all rows from the cotisation table.
+     *
+     * @param			 PropelPDO $con the connection to use
+     * @return		 int The number of affected rows (if supported by underlying database driver).
+     * @throws		 PropelException Any exceptions caught during processing will be
+     *							rethrown wrapped into a PropelException.
+     */
+    public static function doSoftDeleteAll(PropelPDO $con = null)
+    {
+        if ($con === null) {
+            $con = Propel::getConnection(CotisationPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+        }
+        $selectCriteria = new Criteria();
+        $selectCriteria->add(CotisationPeer::DELETED_AT, null, Criteria::ISNULL);
+        $selectCriteria->setDbName(CotisationPeer::DATABASE_NAME);
+        $modifyCriteria = new Criteria();
+        $modifyCriteria->add(CotisationPeer::DELETED_AT, time());
+
+        return BasePeer::doUpdate($selectCriteria, $modifyCriteria, $con);
+    }
+
+    /**
+     * Delete or soft delete all records, depending on CotisationPeer::$softDelete
+     *
+     * @param			 PropelPDO $con the connection to use
+     * @return		 int	The number of affected rows (if supported by underlying database driver).
+     * @throws		 PropelException Any exceptions caught during processing will be
+     *							rethrown wrapped into a PropelException.
+     */
+    public static function doDeleteAll(PropelPDO $con = null)
+    {
+        if (CotisationPeer::isSoftDeleteEnabled()) {
+            return CotisationPeer::doSoftDeleteAll($con);
+        } else {
+            return CotisationPeer::doForceDeleteAll($con);
+        }
     }
 
 } // BaseCotisationPeer

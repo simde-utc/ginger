@@ -72,6 +72,12 @@ abstract class BaseCotisation extends BaseObject implements Persistent
     protected $updated_at;
 
     /**
+     * The value for the deleted_at field.
+     * @var        string
+     */
+    protected $deleted_at;
+
+    /**
      * @var        Personne
      */
     protected $aPersonne;
@@ -269,6 +275,43 @@ abstract class BaseCotisation extends BaseObject implements Persistent
     }
 
     /**
+     * Get the [optionally formatted] temporal [deleted_at] column value.
+     *
+     *
+     * @param string $format The date/time format string (either date()-style or strftime()-style).
+     *				 If format is null, then the raw DateTime object will be returned.
+     * @return mixed Formatted date/time value as string or DateTime object (if format is null), null if column is null, and 0 if column value is 0000-00-00 00:00:00
+     * @throws PropelException - if unable to parse/validate the date/time value.
+     */
+    public function getDeletedAt($format = 'Y-m-d H:i:s')
+    {
+        if ($this->deleted_at === null) {
+            return null;
+        }
+
+        if ($this->deleted_at === '0000-00-00 00:00:00') {
+            // while technically this is not a default value of null,
+            // this seems to be closest in meaning.
+            return null;
+        } else {
+            try {
+                $dt = new DateTime($this->deleted_at);
+            } catch (Exception $x) {
+                throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->deleted_at, true), $x);
+            }
+        }
+
+        if ($format === null) {
+            // Because propel.useDateTimeClass is true, we return a DateTime object.
+            return $dt;
+        } elseif (strpos($format, '%') !== false) {
+            return strftime($format, $dt->format('U'));
+        } else {
+            return $dt->format($format);
+        }
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param int $v new value
@@ -428,6 +471,29 @@ abstract class BaseCotisation extends BaseObject implements Persistent
     } // setUpdatedAt()
 
     /**
+     * Sets the value of [deleted_at] column to a normalized version of the date/time value specified.
+     *
+     * @param mixed $v string, integer (timestamp), or DateTime value.
+     *               Empty strings are treated as null.
+     * @return Cotisation The current object (for fluent API support)
+     */
+    public function setDeletedAt($v)
+    {
+        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+        if ($this->deleted_at !== null || $dt !== null) {
+            $currentDateAsString = ($this->deleted_at !== null && $tmpDt = new DateTime($this->deleted_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
+            $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
+            if ($currentDateAsString !== $newDateAsString) {
+                $this->deleted_at = $newDateAsString;
+                $this->modifiedColumns[] = CotisationPeer::DELETED_AT;
+            }
+        } // if either are not null
+
+
+        return $this;
+    } // setDeletedAt()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -466,6 +532,7 @@ abstract class BaseCotisation extends BaseObject implements Persistent
             $this->montant = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
             $this->created_at = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
             $this->updated_at = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+            $this->deleted_at = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -474,7 +541,7 @@ abstract class BaseCotisation extends BaseObject implements Persistent
                 $this->ensureConsistency();
             }
 
-            return $startcol + 7; // 7 = CotisationPeer::NUM_HYDRATE_COLUMNS.
+            return $startcol + 8; // 8 = CotisationPeer::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Cotisation object", $e);
@@ -568,6 +635,18 @@ abstract class BaseCotisation extends BaseObject implements Persistent
             $deleteQuery = CotisationQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
+            // soft_delete behavior
+            if (!empty($ret) && CotisationQuery::isSoftDeleteEnabled()) {
+                $this->keepUpdateDateUnchanged();
+                $this->setDeletedAt(time());
+                $this->save($con);
+                $this->postDelete($con);
+                $con->commit();
+                CotisationPeer::removeInstanceFromPool($this);
+
+                return;
+            }
+
             if ($ret) {
                 $deleteQuery->delete($con);
                 $this->postDelete($con);
@@ -734,6 +813,9 @@ abstract class BaseCotisation extends BaseObject implements Persistent
         if ($this->isColumnModified(CotisationPeer::UPDATED_AT)) {
             $modifiedColumns[':p' . $index++]  = '`UPDATED_AT`';
         }
+        if ($this->isColumnModified(CotisationPeer::DELETED_AT)) {
+            $modifiedColumns[':p' . $index++]  = '`DELETED_AT`';
+        }
 
         $sql = sprintf(
             'INSERT INTO `cotisation` (%s) VALUES (%s)',
@@ -765,6 +847,9 @@ abstract class BaseCotisation extends BaseObject implements Persistent
                         break;
                     case '`UPDATED_AT`':
                         $stmt->bindValue($identifier, $this->updated_at, PDO::PARAM_STR);
+                        break;
+                    case '`DELETED_AT`':
+                        $stmt->bindValue($identifier, $this->deleted_at, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -933,6 +1018,9 @@ abstract class BaseCotisation extends BaseObject implements Persistent
             case 6:
                 return $this->getUpdatedAt();
                 break;
+            case 7:
+                return $this->getDeletedAt();
+                break;
             default:
                 return null;
                 break;
@@ -969,6 +1057,7 @@ abstract class BaseCotisation extends BaseObject implements Persistent
             $keys[4] => $this->getMontant(),
             $keys[5] => $this->getCreatedAt(),
             $keys[6] => $this->getUpdatedAt(),
+            $keys[7] => $this->getDeletedAt(),
         );
         if ($includeForeignObjects) {
             if (null !== $this->aPersonne) {
@@ -1029,6 +1118,9 @@ abstract class BaseCotisation extends BaseObject implements Persistent
             case 6:
                 $this->setUpdatedAt($value);
                 break;
+            case 7:
+                $this->setDeletedAt($value);
+                break;
         } // switch()
     }
 
@@ -1060,6 +1152,7 @@ abstract class BaseCotisation extends BaseObject implements Persistent
         if (array_key_exists($keys[4], $arr)) $this->setMontant($arr[$keys[4]]);
         if (array_key_exists($keys[5], $arr)) $this->setCreatedAt($arr[$keys[5]]);
         if (array_key_exists($keys[6], $arr)) $this->setUpdatedAt($arr[$keys[6]]);
+        if (array_key_exists($keys[7], $arr)) $this->setDeletedAt($arr[$keys[7]]);
     }
 
     /**
@@ -1078,6 +1171,7 @@ abstract class BaseCotisation extends BaseObject implements Persistent
         if ($this->isColumnModified(CotisationPeer::MONTANT)) $criteria->add(CotisationPeer::MONTANT, $this->montant);
         if ($this->isColumnModified(CotisationPeer::CREATED_AT)) $criteria->add(CotisationPeer::CREATED_AT, $this->created_at);
         if ($this->isColumnModified(CotisationPeer::UPDATED_AT)) $criteria->add(CotisationPeer::UPDATED_AT, $this->updated_at);
+        if ($this->isColumnModified(CotisationPeer::DELETED_AT)) $criteria->add(CotisationPeer::DELETED_AT, $this->deleted_at);
 
         return $criteria;
     }
@@ -1147,6 +1241,7 @@ abstract class BaseCotisation extends BaseObject implements Persistent
         $copyObj->setMontant($this->getMontant());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
+        $copyObj->setDeletedAt($this->getDeletedAt());
 
         if ($deepCopy && !$this->startCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1268,6 +1363,7 @@ abstract class BaseCotisation extends BaseObject implements Persistent
         $this->montant = null;
         $this->created_at = null;
         $this->updated_at = null;
+        $this->deleted_at = null;
         $this->alreadyInSave = false;
         $this->alreadyInValidation = false;
         $this->clearAllReferences();
@@ -1325,6 +1421,34 @@ abstract class BaseCotisation extends BaseObject implements Persistent
         $this->modifiedColumns[] = CotisationPeer::UPDATED_AT;
 
         return $this;
+    }
+
+    // soft_delete behavior
+
+    /**
+     * Bypass the soft_delete behavior and force a hard delete of the current object
+     */
+    public function forceDelete(PropelPDO $con = null)
+    {
+        if ($isSoftDeleteEnabled = CotisationPeer::isSoftDeleteEnabled()) {
+            CotisationPeer::disableSoftDelete();
+        }
+        $this->delete($con);
+        if ($isSoftDeleteEnabled) {
+            CotisationPeer::enableSoftDelete();
+        }
+    }
+
+    /**
+     * Undelete a row that was soft_deleted
+     *
+     * @return		 int The number of rows affected by this update and any referring fk objects' save() operations.
+     */
+    public function unDelete(PropelPDO $con = null)
+    {
+        $this->setDeletedAt(null);
+
+        return $this->save($con);
     }
 
 }
