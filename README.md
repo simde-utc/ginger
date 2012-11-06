@@ -3,7 +3,7 @@ ginger
 
 Outil de gestion des cotisants
 
-[![Build Status](https://secure.travis-ci.org/apuyou/ginger.png)](http://travis-ci.org/apuyou/ginger)
+[![Build Status](https://secure.travis-ci.org/simde-utc/ginger.png)](http://travis-ci.org/apuyou/ginger)
 
 Installation
 ------------
