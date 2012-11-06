@@ -9,7 +9,7 @@ set_include_path("../build/classes" . PATH_SEPARATOR . get_include_path());
 // Include config
 require_once '../config.php';
 
-require_once '../class/Koala.class.php';
+require_once '../lib/Koala/Koala.class.php';
 require_once '../class/Ginger.class.php';
 
 class MyAuth extends \Koala\KoalaAuth {
