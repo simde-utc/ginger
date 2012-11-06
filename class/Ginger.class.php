@@ -1,5 +1,5 @@
 <?php
-require_once 'Koala.class.php';
+require_once '../lib/Koala/Koala.class.php';
 use \Koala\ApiException;
 
 require_once 'AccountsApi.class.php';

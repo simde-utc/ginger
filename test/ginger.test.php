@@ -8,7 +8,7 @@ set_include_path("../build/classes" . PATH_SEPARATOR . get_include_path());
 
 require_once '../config.php';
 require_once '../class/Ginger.class.php';
-require_once '../class/Koala.class.php';
+require_once '../lib/Koala/Koala.class.php';
 use \Koala\ApiException;
 
 class TruncateOperation extends \PHPUnit_Extensions_Database_Operation_Truncate
