@@ -30,38 +30,68 @@ class Personne extends BasePersonne
 		return !$this->getCotisations($crit)->isEmpty();
 	}
 	
-	public function updateFromAccounts($accounts) {
-		if($this->getLogin()){
-			$personneData = $accounts->getUserInfo($this->getLogin());
+	public function updateFromAccounts($personneData){
+		$this->setLogin($personneData->username);
+		$prenom = preg_replace("/(\s+|-)(\w)/ue", "'\\1'.mb_strtoupper('\\2')", mb_strtolower($personneData->firstName));
+		$this->setPrenom(preg_replace("/^(\w)/ue", "mb_strtoupper('\\1')", $prenom));
+		$this->setNom(mb_strtoupper($personneData->lastName));
+		$this->setMail($personneData->mail);
+		switch($personneData->profile){
+			case "ETU UTC":
+				$this->setType("etu");
+				break;
+			case "ETU ESCOM":
+				$this->setType("escom");
+				break;
+			case "PERSONNEL":
+				$this->setType("pers");
+				break;
+			case "PERSONNEL ESCOM": // Purement théorique pour l'instant
+			$this->setType("escompers");
+				break;
+		}
+		$this->setBadgeUid($personneData->cardSerialNumber);
+		$this->setExpirationBadge($personneData->cardEndDate/1000);
+		$this->setIsAdulte($personneData->legalAge);
+		$this->save();
+	}
+	
+	public function updateFromAccountsWithLogin($accounts){
+		$accountsData = $accounts->getUserInfo($this->getLogin());
+		if($accountsData){
+			$this->updateFromAccounts($accountsData);
+		}
+	}
+	
+	public function updateFromAccountsWithCard($accounts){
+		$accountsData = $accounts->cardLookup($this->getBadgeUid());
+		if($accountsData){
+			$this->updateFromAccounts($accountsData);
+		}
+	}
+	
+	public function getArray($badgeData) {
+		// création de l'array du retour
+		$retour = array(
+				"login" => $this->getLogin(),
+				"nom" => $this->getNom(),
+				"prenom" => $this->getPrenom(),
+				"mail" => $this->getMail(),
+				"type" => $this->getType(),
+				"is_adulte" => $this->getIsAdulte(),
+				"is_cotisant" => $this->isCotisant()
+		);
+
+		// si la personne a les droits badges, alors on envoie aussi les badges
+		if($badgeData){
+			$badge = array(
+					"badge_uid" => $this->getBadgeUid(),
+					"expiration_badge" => $this->getExpirationBadge()
+			);
+			
+			$retour = array_merge($retour, $badge);
 		}
 		
-		if($personneData){
-			$this->setLogin($personneData->username);
-			$prenom = preg_replace("/(\s+|-)(\w)/ue", "'\\1'.mb_strtoupper('\\2')", mb_strtolower($personneData->firstName));
-			$this->setPrenom(preg_replace("/^(\w)/ue", "mb_strtoupper('\\1')", $prenom));
-			$this->setNom(mb_strtoupper($personneData->lastName));
-			$this->setMail($personneData->mail);
-			switch($personneData->profile){
-				case "ETU UTC":
-					$this->setType("etu");
-					break;
-				case "ETU ESCOM":
-					$this->setType("escom");
-					break;
-				case "PERSONNEL":
-					$this->setType("pers");
-					break;
-				case "PERSONNEL ESCOM": // Purement théorique pour l'instant
-				$this->setType("escompers");
-					break;
-			}
-			$this->setBadgeUid($personneData->cardSerialNumber);
-			$this->setExpirationBadge($personneData->cardEndDate/1000);
-			$this->setIsAdulte($personneData->legalAge);
-			$this->save();
-			
-			return true;
-		}
-		return false;
+		return $retour;
 	}
 }

@@ -25,62 +25,56 @@ class Ginger {
 		// récupération de la personne
 		$personne = PersonneQuery::create('p')
 						->where("p.login = ?", $login)
-						->_if($this->auth->getDroitBadges())
-						->orWhere("p.badgeUid = ?", $login)
-						->_endif()
 						->findOneOrCreate();
 		
 		// Si l'utilisateur est introuvable, on essaie de le récupérer à la DSI
-		if($personne->isNew()){
+		// On récupère aussi si il est mineur ou qu'on n'a pas son mail (importé des cotisants)
+		if($personne->isNew() || !$personne->getIsAdulte() || !$personne->getMail()){
 			// On cherche à mettre à jour en utilisant le login
-			$personne->updateFromAccounts($this->accounts);
-			
-			// Si l'utilisateur est toujours introuvable et qu'on a les droits, on recherche le badge
-			if($personne->isNew() && $this->auth->getDroitBadges()){
-				$personneData = $this->accounts->cardLookup($login);
-				
-				if(!empty($personneData->username)){
-					$personne = PersonneQuery::create()
-									->filterByLogin($personneData->username)
-									->findOneOrCreate();
-					$personne->setBadgeUid($personneData->cardSerialNumber);
-					$personne->save();
-				}
-			}
+			$personne->updateFromAccountsWithLogin($this->accounts);
 		}
 		
-		// S'il est toujours introuvable, on renvoie une erreur
-		if($personne->isNew())
+		// S'il est toujours neuf (pas trouvé ni sauvé par un updateFromAccounts)
+		if($personne->isNew()){
 			throw new ApiException(404);
+		}
+
+		return $personne->getArray($this->auth->getDroitBadges());
+	}
+	
+	public function getPersonneDetailsByCard($card) {
+		// Vérification des droits
+		if(!$this->auth->getDroitBadges())
+			throw new ApiException(403);
 		
-		// On a la personne, bien. On met quand même à jour si :
-		// - il est mineur
-		// - on n'a pas son mail (import depuis le fichier des cotisants)
-		if(!$personne->getIsAdulte() || !$personne->getMail()){
-			$personne->updateFromAccounts($this->accounts);
+		// Récupération de la personne
+		$personne = PersonneQuery::create('p')
+						->where("p.badgeUid = ?", $card)
+						->findOne();
+		
+		// Si l'utilisateur est introuvable, on essaie de le trouver via la DSI
+		if(!$personne){
+			// On cherche la personne par carte
+			$accountsData = $this->accounts->cardLookup($card);
+			
+			// Si la DSI ne renvoie rien, il n'existe pas
+			if(!$accountsData)
+				throw new ApiException(404);
+			
+			// Il existe, on recherche son login dans ginger (ou on lui fait une nouvelle ligne)
+			$personne = PersonneQuery::create('p')
+							->where("p.login = ?", $accountsData->username)
+							->findOneOrCreate();
+			
+			// On met à jour toutes les données (notamment le badge) avec ce qu'on a déjà récupéré
+			$personne->updateFromAccounts($accountsData);
+		}
+		// S'il existe mais est mineur ou qu'on n'a pas son mail (importé des cotisants)
+		else if(!$personne->getIsAdulte() || !$personne->getMail()){
+			$personne->updateFromAccountsWithCard($this->accounts);
 		}
 
-		// création de l'array du retour
-		$retour = array(
-				"login" => $personne->getLogin(),
-				"nom" => $personne->getNom(),
-				"prenom" => $personne->getPrenom(),
-				"mail" => $personne->getMail(),
-				"type" => $personne->getType(),
-				"is_adulte" => $personne->getIsAdulte(),
-				"is_cotisant" => $personne->isCotisant()
-		);
-
-		// si la personne a les droits badges, alors on envoie aussi les badges
-		if($this->auth->getDroitBadges()){
-			$badge = array(
-					"badge_uid" => $personne->getBadgeUid(),
-					"expiration_badge" => $personne->getExpirationBadge()
-			);
-			$retour = array_merge($retour, $badge);
-		}
-
-		return $retour;
+		return $personne->getArray($this->auth->getDroitBadges());;
 	}
 
 	public function getPersonneCotisations($login) {
