@@ -38,6 +38,12 @@ $app->get('/v1/:login', function ($login) use ($app, $myAuth) {
 	$app->render('success.json.php', array('result'=>$r));
 });
 
+// récupération d'un utilisateur par badge
+$app->get('/v1/badge/:card', function ($card) use ($app, $myAuth) {
+	$r = $myAuth->ginger->getPersonneDetailsByCard($card);
+	$app->render('success.json.php', array('result'=>$r));
+});
+
 // récupération des cotisations
 $app->get('/v1/:login/cotisations', function ($login) use ($app, $myAuth) {
 	$r = $myAuth->ginger->getPersonneCotisations($login);
