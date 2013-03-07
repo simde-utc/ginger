@@ -135,6 +135,18 @@ class Ginger {
 						->findOneByLogin($login);
 		if(!$personne)
 			throw new ApiException(404);
+		
+		// On récupère toutes les cotisations de ce user
+		$cotisations = $personne->getCotisations();
+		
+		// Si une de ces cotisations englobe la nouvelle cotisation, on la refuse
+		foreach($cotisations as $cotisation) {
+			if($debut >= strtotime($cotisation->getDebut())
+			  && $fin <= strtotime($cotisation->getFin())
+			  && !$cotisation->getDeletedAt()){
+				throw new ApiException(409);
+			}
+		}
 
 		// création de la nouvelle cotisation
 		$cotisation = new Cotisation();
