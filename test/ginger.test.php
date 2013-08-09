@@ -46,6 +46,12 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 				"montant" => 20,
 		);
 	}
+  
+	protected function getStats() {
+		return array(
+				"A12" => 1
+    );
+	}
 	
 	protected $client=NULL;
 
@@ -203,6 +209,15 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 		$ginger->deleteCotisation(1);
 		$details = $ginger->getPersonneDetails($expected_details['login']);
 		$this->assertFalse($details["is_cotisant"]);
+	}
+  
+	public function testGetStats() {
+		$ginger = new Ginger('', 'abc');
+		$expected_details = $this->getStats();
+		
+		$details = $ginger->getStats();
+    var_dump($details);
+		$this->assertEquals($expected_details, $details);
 	}
 }
 

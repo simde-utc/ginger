@@ -191,7 +191,7 @@ class Ginger {
 
     $output = array();
     foreach($semestres as $semestre){
-      $output[] = array($this->dateToSemestre($semestre->getDebut()) => $semestre->getCount());
+      $output[$this->dateToSemestre($semestre->getDebut())] = $semestre->getCount();
     }
     
     return $output;
