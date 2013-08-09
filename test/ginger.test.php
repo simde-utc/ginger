@@ -140,7 +140,7 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 		$expected_details = $this->getPersonneDetails();
 		$details = $ginger->getPersonneDetails($expected_details['login']);
 		$this->assertEquals($expected_details, $details);
-		$details = $ginger->getPersonneDetails($expected_details['badge_uid']);
+		$details = $ginger->getPersonneDetailsByCard($expected_details['badge_uid']);
 		$this->assertEquals($expected_details, $details);
 	}
 
