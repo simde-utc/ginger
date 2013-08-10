@@ -178,5 +178,40 @@ class Ginger {
 		
 		return True;
 	}
+  
+  public function getStats(){
+		if(!$this->auth->getDroitCotisations())
+			throw new ApiException(403);
+    
+    $semestres = CotisationQuery::create()
+      ->withColumn("COUNT(*)", "Count")
+      ->groupByDebut()
+      ->orderByDebut()
+      ->find();
+
+    $output = array();
+    foreach($semestres as $semestre){
+      $output[$this->dateToSemestre($semestre->getDebut())] = $semestre->getCount();
+    }
+    
+    return $output;
+  }
+  
+  protected function dateToSemestre($date){
+    $time = strtotime($date);
+
+    if(date('m', $time) == 1) {
+      return 'A'.(date('y', $time)-1);
+    }
+    else if(date('m', $time) >= 2 && date('m', $time) <= 7) {
+      return 'P'.date('y', $time);
+    }	
+    elseif(date('m', $time) >= 8) {
+      return 'A'.date('y', $time);
+    }
+    else {
+      return 'WTF ?';
+    }
+  }
 }
 

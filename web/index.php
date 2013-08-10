@@ -32,6 +32,12 @@ $app = new \Koala\Koala($myAuth, array(
 /***********************************************************************
  *                             Routes
  ***********************************************************************/
+// récupération des stats
+$app->get('/v1/stats', function () use ($app, $myAuth) {
+	$r = $myAuth->ginger->getStats();
+	$app->render('success.json.php', array('result'=>$r));
+});
+
 // récupération d'un utilisateur
 $app->get('/v1/:login', function ($login) use ($app, $myAuth) {
 	$r = $myAuth->ginger->getPersonneDetails($login);
