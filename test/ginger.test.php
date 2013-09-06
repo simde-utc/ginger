@@ -42,7 +42,7 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 		return array(
 				"id" => 1,
 				"debut" => '2012-09-01',
-				"fin" => '2013-09-01',
+				"fin" => '2020-09-01',
 				"montant" => 20,
 		);
 	}
