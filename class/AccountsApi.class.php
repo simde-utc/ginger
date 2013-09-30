@@ -24,7 +24,8 @@ class AccountsApi {
 		$ch = curl_init($url);
 		curl_setopt_array($ch, array(
 				CURLOPT_USERAGENT => $this->useragent,
-				CURLOPT_RETURNTRANSFER => true
+				CURLOPT_RETURNTRANSFER => true,
+				CURLOPT_TIMEOUT => 1
 		));
 		
 		// Éxécution de la requête
