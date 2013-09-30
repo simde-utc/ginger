@@ -72,7 +72,7 @@ class AccountsApi {
 	}
 	
 	private function swapUid($in){
-		return $in[6].$in[7].$in[4].$in[5].$in[2].$in[3].$in[0].$in[1];
+		return strtoupper($in[6].$in[7].$in[4].$in[5].$in[2].$in[3].$in[0].$in[1]);
 	}
 }
 
