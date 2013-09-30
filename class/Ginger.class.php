@@ -27,14 +27,10 @@ class Ginger {
 						->where("p.login = ?", $login)
 						->findOneOrCreate();
 		
-		// Si l'utilisateur est introuvable, on essaie de le récupérer à la DSI
-		// On récupère aussi si il est mineur ou qu'on n'a pas son mail (importé des cotisants)
-		if($personne->isNew() || !$personne->getIsAdulte() || !$personne->getMail()){
-			// On cherche à mettre à jour en utilisant le login
-			$personne->updateFromAccountsWithLogin($this->accounts);
-		}
+		// On cherche à mettre à jour en utilisant le login
+		$personne->updateFromAccountsWithLogin($this->accounts);
 		
-		// S'il est toujours neuf (pas trouvé ni sauvé par un updateFromAccounts)
+		// Si on a toujours un objet vide, il n'existe pas
 		if($personne->isNew()){
 			throw new ApiException(404);
 		}
@@ -47,31 +43,32 @@ class Ginger {
 		if(!$this->auth->getDroitBadges())
 			throw new ApiException(403);
 		
-		// Récupération de la personne
-		$personne = PersonneQuery::create('p')
-						->where("p.badgeUid = ?", $card)
-						->findOne();
-		
-		// Si l'utilisateur est introuvable, on essaie de le trouver via la DSI
+		// On cherche la personne par carte
+		$accountsData = $this->accounts->cardLookup($card);
+    
+    // Si on a une réponse d'Accounts, on met à jour à partir de cette réponse
+    if($accountsData){
+      if($accountsData->username){
+    		// On recherche dans Ginger à partir du login (ou on fait une nouvelle ligne)
+    		$personne = PersonneQuery::create('p')
+    						->where("p.login = ?", $accountsData->username)
+    						->findOneOrCreate();
+			
+    		// On met à jour toutes les données (notamment le badge) avec ce qu'on a déjà récupéré
+    		$personne->updateFromAccounts($accountsData);        
+      }
+    }
+    // Sinon, on essaie de trouver les données dans Ginger
+    else {
+  		// Récupération de la personne
+  		$personne = PersonneQuery::create('p')
+  						->where("p.badgeUid = ?", $card)
+  						->findOne();
+    }
+    
+    // Si personne est vide (Accounts a pas renvoyé de login, ou Accounts down et pas dans Ginger)
 		if(!$personne){
-			// On cherche la personne par carte
-			$accountsData = $this->accounts->cardLookup($card);
-			
-			// Si la DSI ne renvoie rien, il n'existe pas
-			if(!$accountsData)
-				throw new ApiException(404);
-			
-			// Il existe, on recherche son login dans ginger (ou on lui fait une nouvelle ligne)
-			$personne = PersonneQuery::create('p')
-							->where("p.login = ?", $accountsData->username)
-							->findOneOrCreate();
-			
-			// On met à jour toutes les données (notamment le badge) avec ce qu'on a déjà récupéré
-			$personne->updateFromAccounts($accountsData);
-		}
-		// S'il existe mais est mineur ou qu'on n'a pas son mail (importé des cotisants)
-		else if(!$personne->getIsAdulte() || !$personne->getMail()){
-			$personne->updateFromAccountsWithCard($this->accounts);
+		  throw new ApiException(404);
 		}
 
 		return $personne->getArray($this->auth->getDroitBadges());;
