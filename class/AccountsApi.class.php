@@ -1,5 +1,8 @@
 <?php
 
+class AccountsApiException extends Exception {}
+class AccountsNetworkException extends Exception {}
+
 class AccountsApi {
 	private $useragent = "ginger/0.1";
     private $accounts_url;
@@ -33,11 +36,11 @@ class AccountsApi {
 		
 		// Si erreur d'appel de cron fatal
 		if(curl_errno($ch) != 0){
-			return false;
+			throw new AccountsNetworkException("Network error when calling Accounts");
 		}
 		// Si erreur non trouvé, c'est pas fatal (on renverra 404 plus tard)
 		else if(curl_getinfo($ch, CURLINFO_HTTP_CODE) != 200){
-			return false;
+			throw new AccountsApiException($result, curl_getinfo($ch, CURLINFO_HTTP_CODE));
 		}
 		// Sinon, on renvoie les infos
 		else {
