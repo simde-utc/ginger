@@ -11,4 +11,6 @@ class Config {
     public static $REMOTE_GINGER_KEY = "fauxginger";
     // timeout pour l'appel au ginger distant
     public static $REMOTE_GINGER_TIMEOUT = 0.2;
+    // If false, then ginger skip the call to account on card lookup if the user is already in database
+    public static $REFRESH_ON_CARD_LOOKUP = true;
 }
