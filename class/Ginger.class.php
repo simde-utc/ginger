@@ -3,11 +3,12 @@ require_once '../lib/Koala/Koala.class.php';
 use \Koala\ApiException;
 
 require_once 'AccountsApi.class.php';
+require_once 'GingerAccountsApi.class.php';
 
 class Ginger {
 	protected $auth, $accounts;
 	
-	public function __construct($accounts_url, $key) {
+	public function __construct($key) {
 		// vérification que la clef est en argument
 		if (empty($key))
 			throw new ApiException(401);
@@ -17,8 +18,14 @@ class Ginger {
 		if(!$this->auth)
 			throw new ApiException(403);
 
-        // Initialisation de Accounts
-		$this->accounts = new AccountsApi(Config::$ACCOUNTS_URL);
+		// Initialisation de Accounts
+		if (Config::$ACCOUNTS_BACKEND === 'ginger') {
+		$this->accounts = new GingerAccountsApi(Config::$ACCOUNTS_URL, CONFIG::$REMOTE_GINGER_KEY,
+			CONFIG::$REMOTE_GINGER_TIMEOUT);
+		}
+		else {
+			$this->accounts = new AccountsApi(Config::$ACCOUNTS_URL);
+		}
 	}
 
 	public function getPersonneDetails($login) {
@@ -36,9 +43,11 @@ class Ginger {
 			if(substr($ex->getMessage(), 0, 20) == "No person with login"){
 				throw new ApiException(404);
 			}
+ 			error_log(substr("$ex", 0 , 120));
 		}
 		catch (AccountsNetworkException $ex){
 			// Ok, too bad
+ 			error_log(substr("$ex", 0, 120));
 		}
 		
 		// Si on a toujours un objet vide, il n'existe pas
