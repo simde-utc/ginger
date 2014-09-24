@@ -1,9 +1,9 @@
 <?php
 
-class AccountsApiException extends Exception {}
-class AccountsNetworkException extends Exception {}
+require_once 'ApiInterface.class.php';
 
-class AccountsApi {
+
+class AccountsApi implements AccountsInterface {
 	private $useragent = "ginger/0.1";
     private $accounts_url;
 	

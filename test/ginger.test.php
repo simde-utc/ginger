@@ -111,7 +111,7 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 	}
 	
 	public function testApiKeyValid() {
-		new Ginger('', 'abc');
+		new Ginger('abc');
 	}
 
 	/**
@@ -119,7 +119,7 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 	 * @expectedExceptionCode	 403
 	 */
 	public function testApiKeyInvalid() {
-		new Ginger('', 'existepas');
+		new Ginger('existepas');
 	}
 
 	/**
@@ -127,7 +127,7 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 	 * @expectedExceptionCode	 401
 	 */
 	public function testApiKeyNull() {
-		new Ginger('', NULL);
+		new Ginger(NULL);
 	}
 
 	/**
@@ -135,14 +135,14 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 	 * @expectedExceptionCode	 401
 	 */
 	public function testApiKeyEmptyString() {
-		new Ginger('', '');
+		new Ginger('');
 	}
 
 	/**
 	 * @depends testApiKeyValid
 	 */
 	public function testGetPersonneDetails() {
-		$ginger = new Ginger('', 'abc');
+		$ginger = new Ginger('abc');
 		$expected_details = $this->getPersonneDetails();
 		$details = $ginger->getPersonneDetails($expected_details['login']);
 		$this->assertEquals($expected_details, $details);
@@ -154,7 +154,7 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 	 * @depends testApiKeyValid
 	 */
 	public function testFindPersonne() {
-		$ginger = new Ginger('', 'abc');
+		$ginger = new Ginger('abc');
 		$expected_details = $this->getPersonneDetails();
 		$details = $ginger->findPersonne('trec');
 		$this->assertEquals(array(
@@ -168,7 +168,7 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 	}
 
 	public function testGetCotisations() {
-		$ginger = new Ginger('', 'abc');
+		$ginger = new Ginger('abc');
 		$expected_cotisation = $this->getCotisation();
 		$cotisations = $ginger->getPersonneCotisations('trecouvr');
 		$this->assertEquals(array($expected_cotisation,), $cotisations);
@@ -179,7 +179,7 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 	 * @depends testGetCotisations
 	 */
 	public function testDeleteCotisation() {
-		$ginger = new Ginger('', 'abc');
+		$ginger = new Ginger('abc');
 		$ginger->deleteCotisation(1);
 		
 		$expected_cotisation = $this->getCotisation();
@@ -200,7 +200,7 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 	 * @depends testDeleteCotisation
 	 */
 	public function testIsCotisant() {
-		$ginger = new Ginger('', 'abc');
+		$ginger = new Ginger('abc');
 		$expected_details = $this->getPersonneDetails();
 		
 		$details = $ginger->getPersonneDetails($expected_details['login']);
@@ -212,7 +212,7 @@ class GingerTest extends PHPUnit_Extensions_Database_TestCase
 	}
   
 	public function testGetStats() {
-		$ginger = new Ginger('', 'abc');
+		$ginger = new Ginger('abc');
 
 		$expected_details = $this->getStats();		
 		$details = $ginger->getStats();

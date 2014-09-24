@@ -16,7 +16,7 @@ class MyAuth extends \Koala\KoalaAuth {
 	public $ginger;
 	public function auth($app) {
 		parent::auth($app);
-		$this->ginger = new Ginger(Config::$ACCOUNTS_URL, $app->request()->params('key'));
+		$this->ginger = new Ginger($app->request()->params('key'));
 	}
 }
 $myAuth = new MyAuth();
