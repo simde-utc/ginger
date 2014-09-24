@@ -35,7 +35,7 @@ class GingerAccountsApi implements AccountsInterface {
     protected function callApi($uri) {
         try {
             return Request::get($uri)
-                ->timeout(0.2)
+                ->timeout($this->timeout)
                 ->expectsJson()
                 ->send();
         }
