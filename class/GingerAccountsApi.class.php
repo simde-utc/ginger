@@ -34,7 +34,7 @@ class GingerAccountsApi implements AccountsInterface {
 
     protected function callApi($uri) {
         try {
-            return Request::get($uri)
+            $response = Request::get($uri)
                 ->timeout($this->timeout)
                 ->expectsJson()
                 ->send();
@@ -48,9 +48,17 @@ class GingerAccountsApi implements AccountsInterface {
                 throw new AccountsNetworkException($message);
             }
         }
+        if ($response->code == 404) {
+            $message = ($response->raw_body) ? $response->raw_body : "<EMPTY BODY>";
+            throw new AccountsApiException($message, $response->code);
+        }
+        return $response;
     }
 
     protected function parseResponse($response) {
+        if ($response === null) {
+            throw new AccountsApiException("Null returned");
+        }
         $account = new Account();
         $account->username = $response->login;
         $account->firstName = $response->prenom;

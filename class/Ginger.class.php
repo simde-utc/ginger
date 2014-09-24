@@ -83,9 +83,11 @@ class Ginger {
 			if(substr($ex->getMessage(), 0, 33) == "No badge found with serial number"){
 				throw new ApiException(404);
 			}
+ 			error_log(substr("$ex", 0 , 120));
 		}
 		catch(AccountsNetworkException $ex){
 			// Erreur réseau, skip
+ 			error_log(substr("$ex", 0 , 120));
 		}
 	
 		// Si $personne n'a pas encore été rempli, on le cherche dans ginger
