@@ -57,39 +57,50 @@ class Ginger {
 
 		return $personne->getArray($this->auth->getDroitBadges());
 	}
-	
+
 	public function getPersonneDetailsByCard($card) {
 		// Vérification des droits
 		if(!$this->auth->getDroitBadges())
 			throw new ApiException(403);
-		
-		try {
-	  		// On cherche la personne par carte
-	  		$accountsData = $this->accounts->cardLookup($card);
-	
-			// Si on a une réponse d'Accounts, on met à jour à partir de cette réponse
-			if($accountsData && $accountsData->username){
-				// On recherche dans Ginger à partir du login (ou on fait une nouvelle ligne)
-				$personne = PersonneQuery::create('p')
-								->where("p.login = ?", $accountsData->username)
-								->findOneOrCreate();
+
+		$personne = null;
+		if (!Config::$REFRESH_ON_CARD_LOOKUP) {
+			$personne = PersonneQuery::create('p')
+							->where("p.badgeUid = ?", $card)
+							->findOne();
+		}
+
+		if (!$personne) {
+			try {
+				// On cherche la personne par carte
+				$accountsData = $this->accounts->cardLookup($card);
+
+				// Si on a une réponse d'Accounts, on met à jour à partir de cette réponse
+				if($accountsData && $accountsData->username){
+					// On recherche dans Ginger à partir du login (ou on fait une nouvelle ligne)
+					$personne = PersonneQuery::create('p')
+									->where("p.login = ?", $accountsData->username)
+									->findOneOrCreate();
 			
-				// On met à jour toutes les données (notamment le badge) avec ce qu'on a déjà récupéré
-				$personne->updateFromAccounts($accountsData);		
+					// On met à jour toutes les données (notamment le badge) avec ce qu'on a déjà récupéré
+					$personne->updateFromAccounts($accountsData);		
+				}
+			}
+			catch(AccountsApiException $ex) {
+				// Le badge ne correspond à personne, 404
+				if(substr($ex->getMessage(), 0, 33) == "No badge found with serial number"){
+					throw new ApiException(404);
+				}
+				error_log(substr("$ex", 0 , 120));
+			}
+			catch(AccountsNetworkException $ex){
+				// Erreur réseau, skip
+				error_log(substr("$ex", 0 , 120));
 			}
 		}
-		catch(AccountsApiException $ex) {
-			// Le badge ne correspond à personne, 404
-			if(substr($ex->getMessage(), 0, 33) == "No badge found with serial number"){
-				throw new ApiException(404);
-			}
-		}
-		catch(AccountsNetworkException $ex){
-			// Erreur réseau, skip
-		}
-	
+
 		// Si $personne n'a pas encore été rempli, on le cherche dans ginger
-		if(!isset($personne) || $personne->isNew()){
+		if(!$personne || $personne->isNew()){
 			$personne = PersonneQuery::create('p')
 							->where("p.badgeUid = ?", $card)
 							->findOne();
