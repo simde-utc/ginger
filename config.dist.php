@@ -13,4 +13,6 @@ class Config {
     public static $REMOTE_GINGER_TIMEOUT = 0.2;
     // If false, then ginger skip the call to account on card lookup if the user is already in database
     public static $REFRESH_ON_CARD_LOOKUP = true;
+    // If false, then ginger skip the call to account on login lookup if the user is already in database
+    public static $REFRESH_ON_LOGIN_LOOKUP = false;
 }
