@@ -20,8 +20,8 @@ class Ginger {
 
 		// Initialisation de Accounts
 		if (Config::$ACCOUNTS_BACKEND === 'ginger') {
-			$this->accounts = new GingerAccountsApi(Config::$ACCOUNTS_URL, CONFIG::$REMOTE_GINGER_KEY,
-			CONFIG::$REMOTE_GINGER_TIMEOUT);
+			$this->accounts = new GingerAccountsApi(Config::$ACCOUNTS_URL, Config::$REMOTE_GINGER_KEY,
+			Config::$REMOTE_GINGER_TIMEOUT);
 		}
 		else {
 			$this->accounts = new AccountsApi(Config::$ACCOUNTS_URL);
