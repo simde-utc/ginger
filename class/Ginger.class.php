@@ -20,8 +20,8 @@ class Ginger {
 
 		// Initialisation de Accounts
 		if (Config::$ACCOUNTS_BACKEND === 'ginger') {
-			$this->accounts = new GingerAccountsApi(Config::$ACCOUNTS_URL, CONFIG::$REMOTE_GINGER_KEY,
-			CONFIG::$REMOTE_GINGER_TIMEOUT);
+			$this->accounts = new GingerAccountsApi(Config::$ACCOUNTS_URL, Config::$REMOTE_GINGER_KEY,
+			Config::$REMOTE_GINGER_TIMEOUT);
 		}
 		else {
 			$this->accounts = new AccountsApi(Config::$ACCOUNTS_URL);
@@ -34,21 +34,23 @@ class Ginger {
 						->where("p.login = ?", $login)
 						->findOneOrCreate();
 		
-		try {
-	  		// On cherche à mettre à jour en utilisant le login
-	  		$personne->updateFromAccountsWithLogin($this->accounts);	  
-		}
-		catch (AccountsApiException $ex){
-			// Le login ne correspond à personne, 404
-			if(substr($ex->getMessage(), 0, 20) == "No person with login"){
-				throw new ApiException(404);
-			}
- 			error_log(substr("$ex", 0 , 120));
-		}
-		catch (AccountsNetworkException $ex){
-			// Ok, too bad
- 			error_log(substr("$ex", 0, 120));
-		}
+		if (Config::$REFRESH_ON_LOGIN_LOOKUP || !$personne) {
+            try {
+                // On cherche à mettre à jour en utilisant le login
+                $personne->updateFromAccountsWithLogin($this->accounts);	  
+            }
+            catch (AccountsApiException $ex){
+                // Le login ne correspond à personne, 404
+                if(substr($ex->getMessage(), 0, 20) == "No person with login"){
+                    throw new ApiException(404);
+                }
+                error_log(substr("$ex", 0 , 120));
+            }
+            catch (AccountsNetworkException $ex){
+                // Ok, too bad
+                error_log(substr("$ex", 0, 120));
+            }
+        }
 		
 		// Si on a toujours un objet vide, il n'existe pas
 		if($personne->isNew()){
