@@ -34,7 +34,7 @@ class Ginger {
 						->where("p.login = ?", $login)
 						->findOneOrCreate();
 		
-		if (Config::$REFRESH_ON_LOGIN_LOOKUP || !$personne) {
+		if ($personne->getType() != "ext" && (Config::$REFRESH_ON_LOGIN_LOOKUP || !$personne)) {
             try {
                 // On cherche à mettre à jour en utilisant le login
                 $personne->updateFromAccountsWithLogin($this->accounts);	  
