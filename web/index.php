@@ -22,7 +22,7 @@ class MyAuth extends \Koala\KoalaAuth {
 $myAuth = new MyAuth();
 
 $app = new \Koala\Koala($myAuth, array(
-    'debug' => true,
+    'debug' => false,
     'templates.path' => '../templates'
 ));
 

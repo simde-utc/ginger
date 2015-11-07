@@ -85,7 +85,8 @@ class Ginger {
 									->findOneOrCreate();
 			
 					// On met à jour toutes les données (notamment le badge) avec ce qu'on a déjà récupéré
-					$personne->updateFromAccounts($accountsData);				}
+					$personne->updateFromAccounts($accountsData);				
+				}
 			}
 			catch(AccountsApiException $ex) {
 				// Le badge ne correspond à personne, 404
