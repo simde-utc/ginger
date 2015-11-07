@@ -85,8 +85,7 @@ class Ginger {
 									->findOneOrCreate();
 			
 					// On met à jour toutes les données (notamment le badge) avec ce qu'on a déjà récupéré
-					$personne->updateFromAccounts($accountsData);		
-				}
+					$personne->updateFromAccounts($accountsData);				}
 			}
 			catch(AccountsApiException $ex) {
 				// Le badge ne correspond à personne, 404
@@ -241,6 +240,22 @@ class Ginger {
     return $output;
   }
   
+  public function setPersonne($login, $prenom, $nom, $mail, $is_adulte) {
+	// check les droits
+	if(!$this->auth->getDroitEcriture())
+		throw new ApiException(403);
+
+	// récupération de la personne concernée
+	$personne = PersonneQuery::create()
+					->findOneByLogin($login);
+	if(!$personne)
+		throw new ApiException(404);
+
+	$personne->updateFromUser($prenom, $nom, $mail, $is_adulte);
+
+	return $personne->getArray($this->auth->getDroitBadges());
+  }
+
   protected function dateToSemestre($date){
     $time = strtotime($date);
 

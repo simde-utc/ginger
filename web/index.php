@@ -22,7 +22,7 @@ class MyAuth extends \Koala\KoalaAuth {
 $myAuth = new MyAuth();
 
 $app = new \Koala\Koala($myAuth, array(
-    'debug' => false,
+    'debug' => true,
     'templates.path' => '../templates'
 ));
 
@@ -72,6 +72,19 @@ $app->post('/v1/:login/cotisations', function ($login) use ($app, $myAuth) {
 	
 	$r = $myAuth->ginger->addCotisation($login, strtotime($debut), strtotime($fin), $montant);
 	$app->render('success.json.php', array('result'=>$r));
+});
+
+// Edition des données d'une personne
+$app->post('/v1/:login/edit', function ($login) use ($app, $myAuth) {
+	$prenom = $app->request()->params('prenom');
+	$nom = $app->request()->params('nom');
+	$mail = $app->request()->params('mail');
+	$is_adulte = $app->request->params('is_adulte');
+	if (empty($nom) || empty($prenom) || empty($mail) || empty($is_adulte))
+		throw new \Koala\ApiException(400);
+
+	$r = $myAuth->ginger->setPersonne($login, $prenom, $nom, $mail, $is_adulte);
+	$app->render('success.json.php', array('result' => $r));
 });
 
 // suppression d'une cotisation
