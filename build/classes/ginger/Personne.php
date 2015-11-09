@@ -17,10 +17,11 @@ class Personne extends BasePersonne
 {
 	
 	public function isCotisant() {
-		// Le personnel est membres d'honneur
-		if($this->getType() == "pers") {
-			return true;
-		}
+		// Le personnel doit faire sa demande auprès du BDE pour être inscrit sur les listes
+		// // Le personnel est membres d'honneur
+		// if($this->getType() == "pers") {
+		// 	return true;
+		// }
 		
 		$crit = new Criteria();
 		$crit->add(CotisationPeer::DEBUT, Criteria::CURRENT_DATE, Criteria::LESS_EQUAL);
@@ -30,6 +31,15 @@ class Personne extends BasePersonne
 		return !$this->getCotisations($crit)->isEmpty();
 	}
 	
+	public function updateFromUser($prenom, $nom, $mail, $is_adulte) {
+		$this->setPrenom($prenom);
+		$this->setNom($nom);
+		$this->setMail($mail);
+		$this->setIsAdulte($is_adulte);
+
+		$this->save();
+	}
+
 	public function updateFromAccounts($personneData){
 		$this->setLogin($personneData->username);
 		$prenom = preg_replace("/(\s+|-)(\w)/ue", "'\\1'.mb_strtoupper('\\2')", mb_strtolower($personneData->firstName));
