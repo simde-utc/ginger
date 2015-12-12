@@ -34,7 +34,7 @@ class Ginger {
 						->where("p.login = ?", $login)
 						->findOneOrCreate();
 		
-		if ($personne->getType() != "ext" && (Config::$REFRESH_ON_LOGIN_LOOKUP || !$personne)) {
+		if (($personne->getType() != "ext" && Config::$REFRESH_ON_LOGIN_LOOKUP) || $personne->isNew()) {
             try {
                 // On cherche à mettre à jour en utilisant le login
                 $personne->updateFromAccountsWithLogin($this->accounts);	  
@@ -65,14 +65,9 @@ class Ginger {
 		if(!$this->auth->getDroitBadges())
 			throw new ApiException(403);
 
-		$personne = null;
-		if (!Config::$REFRESH_ON_CARD_LOOKUP) {
-			$personne = PersonneQuery::create('p')
-							->where("p.badgeUid = ?", $card)
-							->findOne();
-		}
+		$personne = PersonneQuery::create('p')->where("p.badgeUid = ?", $card)->findOne();
 
-		if (!$personne) {
+		if (!$personne || (Config::$REFRESH_ON_CARD_LOOKUP && $personne->getType() != "ext")) {
 			try {
 				// On cherche la personne par carte
 				$accountsData = $this->accounts->cardLookup($card);
@@ -101,19 +96,12 @@ class Ginger {
 			}
 		}
 
-		// Si $personne n'a pas encore été rempli, on le cherche dans ginger
-		if(!$personne || $personne->isNew()){
-			$personne = PersonneQuery::create('p')
-							->where("p.badgeUid = ?", $card)
-							->findOne();
-		}
-
 		// Si $personne est toujours vide (Accounts n'a rien renvoyé, ou Accounts down et pas dans Ginger)
-		if(!$personne){
+		if(!$personne || $personne->isNew()) {
 			throw new ApiException(404);
 		}
 
-		return $personne->getArray($this->auth->getDroitBadges());;
+		return $personne->getArray($this->auth->getDroitBadges());
 	}
 
 	public function getPersonneCotisations($login) {
