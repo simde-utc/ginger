@@ -15,22 +15,22 @@ mb_internal_encoding("UTF-8");
  */
 class Personne extends BasePersonne
 {
-	
+
 	public function isCotisant() {
 		// Le personnel doit faire sa demande auprès du BDE pour être inscrit sur les listes
 		// // Le personnel est membres d'honneur
 		// if($this->getType() == "pers") {
 		// 	return true;
 		// }
-		
+
 		$crit = new Criteria();
 		$crit->add(CotisationPeer::DEBUT, Criteria::CURRENT_DATE, Criteria::LESS_EQUAL);
 		$crit->add(CotisationPeer::FIN, Criteria::CURRENT_DATE, Criteria::GREATER_EQUAL);
 		$crit->add(CotisationPeer::DELETED_AT, NULL ,Criteria::ISNULL);
-		
+
 		return !$this->getCotisations($crit)->isEmpty();
 	}
-	
+
 	public function updateFromUser($prenom, $nom, $mail, $is_adulte) {
 		$this->setPrenom($prenom);
 		$this->setNom($nom);
@@ -50,10 +50,10 @@ class Personne extends BasePersonne
 			case "ETU UTC":
 				$this->setType("etu");
 				break;
-			case "ETU ESCOM":
+			case "ESCOM ETU":
 				$this->setType("escom");
 				break;
-			case "PERSONNEL":
+			case "PERSONNEL UTC":
 				$this->setType("pers");
 				break;
 			case "PERSONNEL ESCOM": // Purement théorique pour l'instant
@@ -65,21 +65,21 @@ class Personne extends BasePersonne
 		$this->setIsAdulte($personneData->legalAge);
 		$this->save();
 	}
-	
+
 	public function updateFromAccountsWithLogin($accounts){
 		$accountsData = $accounts->getUserInfo($this->getLogin());
 		if($accountsData){
 			$this->updateFromAccounts($accountsData);
 		}
 	}
-	
+
 	public function updateFromAccountsWithCard($accounts){
 		$accountsData = $accounts->cardLookup($this->getBadgeUid());
 		if($accountsData){
 			$this->updateFromAccounts($accountsData);
 		}
 	}
-	
+
 	public function getArray($badgeData) {
 		// création de l'array du retour
 		$retour = array(
@@ -98,10 +98,10 @@ class Personne extends BasePersonne
 					"badge_uid" => $this->getBadgeUid(),
 					"expiration_badge" => $this->getExpirationBadge()
 			);
-			
+
 			$retour = array_merge($retour, $badge);
 		}
-		
+
 		return $retour;
 	}
 }
