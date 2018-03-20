@@ -69,12 +69,26 @@ $app->post('/v1/:login/cotisations', function ($login) use ($app, $myAuth) {
 	$montant = $app->request()->params('montant');
 	if (empty($debut) or empty($fin) or empty($montant))
 		throw new \Koala\ApiException(400);
-	
+
 	$r = $myAuth->ginger->addCotisation($login, strtotime($debut), strtotime($fin), $montant);
 	$app->render('success.json.php', array('result'=>$r));
 });
 
 // Edition des données d'une personne
+$app->post('/v1/:login/add', function ($login) use ($app, $myAuth) {
+	$prenom = $app->request()->params('prenom');
+	$nom = $app->request()->params('nom');
+	$mail = $app->request()->params('mail');
+	$badge_uid = $app->request->params('badge_uid');
+	$is_adulte = $app->request->params('is_adulte');
+	if (empty($nom) || empty($prenom) || empty($mail) || empty($badge_uid) || empty($is_adulte))
+		throw new \Koala\ApiException(400);
+
+	$r = $myAuth->ginger->addPersonne($login, $prenom, $nom, $mail, $badge_uid, $is_adulte);
+	$app->render('success.json.php', array('result' => $r));
+});
+
+
 $app->post('/v1/:login/edit', function ($login) use ($app, $myAuth) {
 	$prenom = $app->request()->params('prenom');
 	$nom = $app->request()->params('nom');
