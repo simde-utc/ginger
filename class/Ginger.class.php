@@ -60,6 +60,38 @@ class Ginger {
 		return $personne->getArray($this->auth->getDroitBadges());
 	}
 
+	public function getPersonneDetailsByMail($mail) {
+		// récupération de la personne
+		$personne = PersonneQuery::create('p')
+						->where("p.mail = ?", $mail)
+						->findOneOrCreate();
+
+		if (($personne->getType() != "ext" && Config::$REFRESH_ON_LOGIN_LOOKUP) || $personne->isNew()) {
+            try {
+                // On cherche à mettre à jour en utilisant le login
+                $personne->updateFromAccountsWithLogin($this->accounts);
+            }
+            catch (AccountsApiException $ex){
+                // Le login ne correspond à personne, 404
+                if(substr($ex->getMessage(), 0, 20) == "No person with login"){
+                    throw new ApiException(404);
+                }
+                error_log(substr("$ex", 0 , 120));
+            }
+            catch (AccountsNetworkException $ex){
+                // Ok, too bad
+                error_log(substr("$ex", 0, 120));
+            }
+        }
+
+		// Si on a toujours un objet vide, il n'existe pas
+		if($personne->isNew()){
+			throw new ApiException(404);
+		}
+
+		return $personne->getArray($this->auth->getDroitBadges());
+	}
+
 	public function getPersonneDetailsByCard($card) {
 		// Vérification des droits
 		if(!$this->auth->getDroitBadges())

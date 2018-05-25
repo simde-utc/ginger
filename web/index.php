@@ -44,6 +44,12 @@ $app->get('/v1/:login', function ($login) use ($app, $myAuth) {
 	$app->render('success.json.php', array('result'=>$r));
 });
 
+// récupération d'un utilisateur par mail
+$app->get('/v1/mail/:mail', function ($mail) use ($app, $myAuth) {
+	$r = $myAuth->ginger->getPersonneDetailsByMail($mail);
+	$app->render('success.json.php', array('result'=>$r));
+});
+
 // récupération d'un utilisateur par badge
 $app->get('/v1/badge/:card', function ($card) use ($app, $myAuth) {
 	$r = $myAuth->ginger->getPersonneDetailsByCard($card);
@@ -69,7 +75,7 @@ $app->post('/v1/:login/cotisations', function ($login) use ($app, $myAuth) {
 	$montant = $app->request()->params('montant');
 	if (empty($debut) or empty($fin) or empty($montant))
 		throw new \Koala\ApiException(400);
-	
+
 	$r = $myAuth->ginger->addCotisation($login, strtotime($debut), strtotime($fin), $montant);
 	$app->render('success.json.php', array('result'=>$r));
 });
