@@ -7,7 +7,7 @@ require_once 'GingerAccountsApi.class.php';
 
 class Ginger {
 	protected $auth, $accounts;
-	
+
 	public function __construct($key) {
 		// vérification que la clef est en argument
 		if (empty($key))
@@ -33,11 +33,11 @@ class Ginger {
 		$personne = PersonneQuery::create('p')
 						->where("p.login = ?", $login)
 						->findOneOrCreate();
-		
+
 		if (($personne->getType() != "ext" && Config::$REFRESH_ON_LOGIN_LOOKUP) || $personne->isNew()) {
             try {
                 // On cherche à mettre à jour en utilisant le login
-                $personne->updateFromAccountsWithLogin($this->accounts);	  
+                $personne->updateFromAccountsWithLogin($this->accounts);
             }
             catch (AccountsApiException $ex){
                 // Le login ne correspond à personne, 404
@@ -51,7 +51,7 @@ class Ginger {
                 error_log(substr("$ex", 0, 120));
             }
         }
-		
+
 		// Si on a toujours un objet vide, il n'existe pas
 		if($personne->isNew()){
 			throw new ApiException(404);
@@ -78,9 +78,9 @@ class Ginger {
 					$personne = PersonneQuery::create('p')
 									->where("p.login = ?", $accountsData->username)
 									->findOneOrCreate();
-			
+
 					// On met à jour toutes les données (notamment le badge) avec ce qu'on a déjà récupéré
-					$personne->updateFromAccounts($accountsData);				
+					$personne->updateFromAccounts($accountsData);
 				}
 			}
 			catch(AccountsApiException $ex) {
@@ -108,19 +108,19 @@ class Ginger {
 		// Vérification des droits
 		if(!$this->auth->getDroitCotisations())
 			throw new ApiException(403);
-			
+
 		$personne = PersonneQuery::create()->findOneByLogin($login);
 		if(!$personne)
 			throw new ApiException(404);
 
 		$cotisations = $personne->getCotisations();
-		
+
 		$r = array();
 		foreach($cotisations as $cotisation) {
 			$cot = array(
 				"id" => $cotisation->getId(),
 				"debut" => $cotisation->getDebut(),
-				"fin" => $cotisation->getFin(),		
+				"fin" => $cotisation->getFin(),
 				"montant" => $cotisation->getMontant(),
 			);
 			if ($cotisation->getDeletedAt()) {
@@ -138,6 +138,8 @@ class Ginger {
  	 	               ->filterByNom("%$loginPart%")
  	 	               ->_or()
  	 	               ->filterByPrenom("%$loginPart%")
+ 	 	               ->_or()
+ 	 	               ->filterByMail("%$loginPart%")
  	 	               ->orderByLogin()
  	 	               ->limit(10)
  	 	               ->find();
@@ -145,7 +147,8 @@ class Ginger {
  	 	$liste = array();
  	 	foreach ($personnes as $personne) {
  	 	 	$liste[] = array('login' => $personne->getLogin(),
- 	 	 	                 'nom' => $personne->getNom(),
+ 	 	 	                 'mail' => $personne->getMail(),
+  	 	 	                 'nom' => $personne->getNom(),
  	 	 	                 'prenom' => $personne->getPrenom());
  	 	}
 
@@ -162,10 +165,10 @@ class Ginger {
 						->findOneByLogin($login);
 		if(!$personne)
 			throw new ApiException(404);
-		
+
 		// On récupère toutes les cotisations de ce user
 		$cotisations = $personne->getCotisations();
-		
+
 		// Si une de ces cotisations englobe la nouvelle cotisation, on la refuse
 		foreach($cotisations as $cotisation) {
 			if($debut >= strtotime($cotisation->getDebut())
@@ -195,21 +198,21 @@ class Ginger {
 		// récupérer la cotisation
 		$cotisation = CotisationQuery::create()
 						->findPk($id_cotisation);
-		
+
 		// si elle n'existe pas on lance une 404
 		if(!$cotisation)
 			throw new ApiException(404);
 
 		// sinon on la detruit
 		$cotisation->delete();
-		
+
 		return True;
 	}
-  
+
   public function getStats(){
 		if(!$this->auth->getDroitCotisations())
 			throw new ApiException(403);
-    
+
     $semestres = CotisationQuery::create()
       ->withColumn("COUNT(*)", "Count")
       ->groupByDebut()
@@ -225,10 +228,10 @@ class Ginger {
         $output[$this->dateToSemestre($semestre->getDebut())] = $semestre->getCount();
       }
     }
-    
+
     return $output;
   }
-  
+
   public function setPersonne($login, $prenom, $nom, $mail, $is_adulte) {
 	// check les droits
 	if(!$this->auth->getDroitEcriture())
@@ -253,7 +256,7 @@ class Ginger {
     }
     else if(date('m', $time) >= 2 && date('m', $time) <= 7) {
       return 'P'.date('y', $time);
-    }	
+    }
     elseif(date('m', $time) >= 8) {
       return 'A'.date('y', $time);
     }
@@ -262,4 +265,3 @@ class Ginger {
     }
   }
 }
-
